@@ -89,7 +89,7 @@ export default function App() {
     <>
       <style>{CSS}</style>
       <div className="bf">
-        <div className="bbar"><div className="bdots"><span className="bdot"/><span className="bdot"/><span className="bdot"/></div><div className="burl">🔒 localhost:5176</div></div>
+    
         <div className="lv">
           <div className="lhero">
             <span className="lbadge">ESC ONLINE · RESPONSÁVEL</span>
@@ -115,7 +115,6 @@ export default function App() {
     <>
       <style>{CSS}</style>
       <div className="bf">
-        <div className="bbar"><div className="bdots"><span className="bdot"/><span className="bdot"/><span className="bdot"/></div><div className="burl">🔒 localhost:5176/responsavel</div></div>
         <div style={{background:"var(--bg)",flex:1,minHeight:0,display:"flex",flexDirection:"column",overflow:"hidden"}}>
 
           {/* Topbar */}
