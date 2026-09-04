@@ -1,0 +1,17 @@
+export const NAV = [
+  {id:"inicio",ic:"🏠",label:"Início"},
+  {id:"filhos",ic:"👨‍👩‍👧‍👦",label:"Meus Filhos"},
+  {id:"dados",ic:"🧑",label:"Meus Dados"},
+  {id:"horario",ic:"🕒",label:"Horário"},
+  {id:"calendario",ic:"📅",label:"Calendário Letivo"},
+  {id:"boletim",ic:"⭐",label:"Boletim"},
+  {id:"frequencia",ic:"✅",label:"Frequência"},
+  {id:"justificativas",ic:"📝",label:"Justificar Falta"},
+  "div",
+  {id:"autorizacoes",ic:"📋",label:"Autorizações"},
+  {id:"comunicados",ic:"🔔",label:"Comunicados"},
+  {id:"canais",ic:"📞",label:"Canais de Atendimento"},
+  "div",
+  {id:"sugestoes",ic:"💬",label:"Críticas ou sugestões"},
+  {id:"privacidade",ic:"🛡️",label:"Políticas de Privacidade"},
+];
