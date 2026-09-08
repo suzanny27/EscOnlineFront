@@ -1,11 +1,6 @@
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
 
-/**
- * Trilha de navegação usada no topo da maioria das páginas internas.
- * items: array de strings, ex: ['Início', 'Horários']
- * O último item é sempre destacado como página atual.
- */
 export default function Breadcrumb({ items, variant = 'light' }) {
   const isDark = variant === 'dark';
 

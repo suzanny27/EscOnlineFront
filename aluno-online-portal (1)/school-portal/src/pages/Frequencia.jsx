@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
-import { attendance, months } from '../data/mockData';
+import { months } from '../data/mockData';
+import { buscarFrequencia } from '../services/Faltasservice';
 
 export default function Frequencia() {
-  const [activeMonth, setActiveMonth] = useState(7); // Agosto
+  const [activeMonth, setActiveMonth] = useState(7);
+  const [attendance, setAttendance] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+
+  React.useEffect(() => {
+    async function carregarFrequencia() {
+      setCarregando(true);
+      const dados = await buscarFrequencia(activeMonth);
+      setAttendance(dados);
+      setCarregando(false);
+    }
+
+    carregarFrequencia();
+  }, [activeMonth]);
 
   return (
     <div>
@@ -13,7 +27,6 @@ export default function Frequencia() {
         <div className="bg-brand-400 text-white px-5 py-3 font-bold text-sm">Frequência</div>
 
         <div className="p-5 md:p-6">
-          {/* Abas de mês */}
           <div className="flex gap-1 overflow-x-auto mb-5 border-b border-slate-100 pb-1">
             {months.map((m, i) => (
               <button

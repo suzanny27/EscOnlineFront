@@ -1,7 +1,3 @@
-// Todos os dados abaixo são FICTÍCIOS, criados apenas para fins de demonstração
-// visual do layout. Nenhuma informação real de aluno, escola ou responsável
-// deve ser inserida diretamente no código-fonte — em produção, esses dados
-// devem vir de uma API autenticada.
 
 export const student = {
   name: 'João Pedro Andrade Souza',
@@ -90,7 +86,6 @@ export const partners = [
   },
 ];
 
-// Grade de disciplinas para a página de Boletim
 export const subjects = [
   { name: 'Biologia', b1: '9.0', b2: '—', b3: '—', b4: '—' },
   { name: 'Química', b1: '7.5', b2: '—', b3: '—', b4: '—' },
@@ -105,7 +100,6 @@ export const subjects = [
   { name: 'História', b1: '8.0', b2: '—', b3: '—', b4: '—' },
 ];
 
-// Horário semanal (dia -> lista de disciplinas por aula)
 export const weekDays = [
   { key: 'seg', label: 'SEG', date: '17/08' },
   { key: 'ter', label: 'TER', date: '18/08' },
@@ -122,7 +116,6 @@ export const schedule = {
   sex: ['Física', 'Português', 'Química', 'Espanhol', 'Biologia', 'Matemática', 'Filosofia', 'Sociologia', 'Inglês'],
 };
 
-// Faltas por disciplina no mês selecionado
 export const attendance = [
   { subject: 'Aprofundamento em Matemática', absences: 0 },
   { subject: 'Biologia', absences: 2 },
@@ -141,7 +134,6 @@ export const attendance = [
 
 export const months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 
-// Turma do aluno (usada na página Minha Turma)
 export const classInfo = {
   crede: 'Crede 16',
   school: school.name,
@@ -150,7 +142,6 @@ export const classInfo = {
   status: 'Letivo',
 };
 
-// Colegas de turma (nomes fictícios)
 export const classmates = [
   'Amanda Felix', 'Ana Beatriz', 'Antônia Ticyane', 'Bruno Castro',
   'Camila Duarte', 'Danyelle Batista', 'Eduardo Franlin', 'Estela Garcia',

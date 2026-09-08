@@ -9,7 +9,6 @@ export default function StudentInfo() {
       <h2 className="text-2xl font-extrabold text-brand-900">Dados Pessoais</h2>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Informações do Aluno */}
         <Card title="INFORMAÇÕES DO ALUNO">
           <div className="flex items-start gap-4 mb-5">
             <div className="w-16 h-16 rounded-full bg-brand-50 flex items-center justify-center text-brand-700 font-bold text-lg shrink-0">
@@ -44,7 +43,6 @@ export default function StudentInfo() {
           </button>
         </Card>
 
-        {/* Informações da Escola */}
         <Card title="INFORMAÇÕES DA ESCOLA">
           <div className="text-sm text-slate-600 space-y-2 mb-4">
             <p><span className="font-semibold text-slate-800">INEP:</span> {school.inep}</p>
@@ -57,7 +55,6 @@ export default function StudentInfo() {
             <p><span className="font-semibold text-slate-800">E-mail:</span> {school.email}</p>
           </div>
 
-          {/* Placeholder de mapa (estático, sem depender de API externa) */}
           <div className="relative w-full h-48 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
             <div className="absolute inset-0 opacity-40 bg-[linear-gradient(45deg,theme(colors.slate.200)_25%,transparent_25%,transparent_75%,theme(colors.slate.200)_75%),linear-gradient(45deg,theme(colors.slate.200)_25%,transparent_25%,transparent_75%,theme(colors.slate.200)_75%)] bg-[length:20px_20px] bg-[position:0_0,10px_10px]" />
             <div className="relative flex flex-col items-center text-slate-400">

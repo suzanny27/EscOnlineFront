@@ -3,7 +3,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import { calendarEvents, months } from '../data/mockData';
 
 export default function Calendario() {
-  const [activeMonth, setActiveMonth] = useState(7); // Agosto (índice 7)
+  const [activeMonth, setActiveMonth] = useState(7);
 
   return (
     <div>
@@ -18,7 +18,6 @@ export default function Calendario() {
           </select>
         </div>
 
-        {/* Abas de mês */}
         <div className="flex gap-1 overflow-x-auto mb-5 border-b border-slate-100 pb-1">
           {months.map((m, i) => (
             <button
@@ -35,7 +34,6 @@ export default function Calendario() {
           ))}
         </div>
 
-        {/* Lista de dias letivos do mês selecionado (mock estático) */}
         <div className="space-y-2">
           {calendarEvents.map((ev, i) => (
             <div

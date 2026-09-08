@@ -5,8 +5,6 @@ import Button from '../components/Button';
 
 const tabs = ['Dados Pessoais', 'Responsável', 'Vida Escolar', 'Saúde | Alimentação'];
 
-// Campos de cada aba. `readOnly` marca campos que vêm de outro sistema
-// (matrícula estadual) e não podem ser editados aqui.
 const tabFields = {
   0: {
     notice:
@@ -48,8 +46,6 @@ const tabFields = {
   },
 };
 
-// Tailwind precisa de classes estáticas (não geradas dinamicamente) para o
-// JIT compilar corretamente, por isso usamos este mapa em vez de template string.
 const gridColsClass = {
   1: 'sm:grid-cols-1',
   2: 'sm:grid-cols-2',
@@ -71,7 +67,6 @@ export default function FichaBiografica() {
       <Breadcrumb items={['Início', 'Diretor de Turma', 'Ficha Biográfica']} />
 
       <div className="bg-white rounded-xl2 shadow-card p-5 md:p-6">
-        {/* Abas */}
         <div className="flex gap-6 border-b border-slate-100 mb-4 overflow-x-auto">
           {tabs.map((tab, i) => (
             <button
@@ -92,7 +87,6 @@ export default function FichaBiografica() {
           {current.notice}
         </div>
 
-        {/* Campos do formulário */}
         <div className="space-y-4">
           {current.fields.map((row, i) => (
             <div key={i} className={`grid gap-4 ${gridColsClass[Math.min(row.length, 4)]}`}>
@@ -103,7 +97,6 @@ export default function FichaBiografica() {
           ))}
         </div>
 
-        {/* Endereço (aparece em Dados Pessoais e Responsável) */}
         {current.hasAddress && (
           <div className="mt-8">
             <div className="flex items-center gap-3 mb-4">
@@ -126,7 +119,6 @@ export default function FichaBiografica() {
           </div>
         )}
 
-        {/* Navegação entre abas */}
         <div className="flex items-center justify-between mt-8">
           <Button
             variant="ghost"

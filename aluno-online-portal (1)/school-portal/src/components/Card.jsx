@@ -1,9 +1,5 @@
 import React from 'react';
 
-/**
- * Card genérico com cabeçalho colorido opcional (usado nos widgets
- * "Calendário Letivo", "Últimas Notícias", "Canais de Atendimento" etc.)
- */
 export default function Card({ title, children, className = '', headerClassName = '' }) {
   return (
     <div

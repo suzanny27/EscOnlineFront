@@ -19,8 +19,15 @@ import Partners from './pages/Partners';
 import Noticias from './pages/Noticias';
 import Feedback from './pages/Feedback';
 import Privacidade from './pages/Privacidade';
+import ProfessorShell from './pages_prof/layout/Shell';
+import ProfessorTurmas from './pages_prof/telas/Turmas';
+import ProfessorNotas from './pages_prof/telas/Notas';
+import ProfessorHorario from './pages_prof/telas/Horario';
+import ProfessorParceiros from './pages_prof/telas/Parceiros';
+import ProfessorCriticas from './pages_prof/telas/Criticas';
+import ResponsavelPortal from '../../../pages(jonas)/src/App.jsx';
+import GestaoPortal from '../../../escola-estadual/src/App.jsx';
 
-// Cada página do menu tem seu componente e o título exibido na Navbar.
 const pages = {
   inicio: { title: 'ESC Online', component: Dashboard },
   'dados-pessoais': { title: 'Dados Pessoais', component: StudentInfo },
@@ -39,43 +46,75 @@ const pages = {
   privacidade: { title: 'Políticas de Privacidade', component: Privacidade },
 };
 
+const professorPages = {
+  turmas: { title: 'Minhas turmas', component: ProfessorTurmas },
+  notas: { title: 'Lançar notas', component: ProfessorNotas },
+  horario: { title: 'Meu horário', component: ProfessorHorario },
+  parceiros: { title: 'Parceiros', component: ProfessorParceiros },
+  criticas: { title: 'Críticas ou sugestões', component: ProfessorCriticas },
+};
+
+function ProfessorPortal({ onLogout }) {
+  const [activePage, setActivePage] = useState('turmas');
+  const current = professorPages[activePage] ?? professorPages.turmas;
+  const PageComponent = current.component;
+
+  return (
+    <ProfessorShell
+      atual={activePage}
+      onNavegar={(page) => page === 'sair' ? onLogout() : setActivePage(page)}
+      onSair={onLogout}
+      breadcrumb={`Professor / ${current.title}`}
+    >
+      <PageComponent />
+    </ProfessorShell>
+  );
+}
+
 export default function App() {
-  // Estado global simples de navegação (sem router, conforme escopo do mock)
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState(null);
   const [activePage, setActivePage] = useState('inicio');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
 
   function handleNavigate(page) {
-    // Todas as páginas do menu agora têm componente próprio (ver `pages` acima)
     setActivePage(pages[page] ? page : 'inicio');
     setSidebarOpen(false);
   }
 
   function confirmLogout() {
     setIsAuthenticated(false);
+    setRole(null);
     setLogoutModalOpen(false);
     setActivePage('inicio');
   }
 
   if (!isAuthenticated) {
-    return <Login onLogin={() => setIsAuthenticated(true)} />;
+    return <Login onLogin={(selectedRole) => { setRole(selectedRole); setIsAuthenticated(true); }} />;
+  }
+
+  if (role === 'professor') {
+    return <ProfessorPortal onLogout={confirmLogout} />;
+  }
+
+  if (role === 'responsavel') {
+    return <ResponsavelPortal initialAuthenticated onLogout={confirmLogout} />;
+  }
+
+  if (role === 'gestao') {
+    return <GestaoPortal />;
   }
 
   return (
     <div className="min-h-screen flex bg-slate-100">
-      <Sidebar
-        activePage={activePage}
-        onNavigate={handleNavigate}
-        isOpen={isSidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        onLogout={() => setLogoutModalOpen(true)}
-      />
-
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar
           title={pages[activePage]?.title ?? 'ESC Online'}
           onMenuClick={() => setSidebarOpen(true)}
+          activePage={activePage}
+          onNavigate={handleNavigate}
+          onLogout={confirmLogout}
         />
 
         <main className="flex-1 p-4 md:p-8">
@@ -86,7 +125,6 @@ export default function App() {
         </main>
       </div>
 
-      {/* Modal de confirmação de saída */}
       <Modal open={isLogoutModalOpen} onClose={() => setLogoutModalOpen(false)}>
         <div className="p-6 text-center">
           <h3 className="text-lg font-bold text-brand-900 mb-2">Saindo</h3>

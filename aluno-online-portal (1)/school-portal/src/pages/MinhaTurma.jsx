@@ -7,7 +7,6 @@ export default function MinhaTurma() {
     <div>
       <Breadcrumb items={['Início', 'Minha Turma']} />
 
-      {/* Banner de informações da turma */}
       <div className="bg-brand-400 text-white rounded-xl2 px-5 py-4 mb-6 grid gap-x-8 gap-y-1 sm:grid-cols-2 lg:grid-cols-4 text-sm">
         <p><span className="font-bold">CREDE:</span> {classInfo.crede}</p>
         <p><span className="font-bold">ESCOLA:</span> {classInfo.school}</p>
@@ -18,7 +17,6 @@ export default function MinhaTurma() {
         </div>
       </div>
 
-      {/* Grid de colegas de turma */}
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {classmates.map((name) => (
           <button

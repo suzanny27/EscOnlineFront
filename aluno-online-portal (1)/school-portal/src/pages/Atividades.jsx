@@ -8,18 +8,15 @@ const tabs = ['Ativas', 'Inativas'];
 export default function Atividades() {
   const [activeTab, setActiveTab] = useState(0);
 
-  // Mock de desempenho — em produção viria da API
   const stats = { sent: 0, notSent: 0, total: 0 };
 
   return (
     <div>
-      {/* Banner azul com breadcrumb, conforme o print original */}
       <div className="bg-brand-400 rounded-xl2 px-5 py-3 mb-6">
         <Breadcrumb items={['Início', 'Atividades']} variant="dark" />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Lista de atividades (Ativas / Inativas) */}
         <div className="lg:col-span-2 bg-white rounded-xl2 shadow-card overflow-hidden">
           <div className="flex border-b border-slate-100">
             {tabs.map((tab, i) => (
@@ -39,7 +36,6 @@ export default function Atividades() {
           <EmptyState message="Nenhuma atividade encontrada" />
         </div>
 
-        {/* Desempenho de Atividades */}
         <div className="bg-white rounded-xl2 shadow-card overflow-hidden h-fit">
           <div className="bg-brand-400 text-white px-5 py-3 font-bold text-sm">
             Desempenho de Atividades

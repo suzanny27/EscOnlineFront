@@ -1,10 +1,5 @@
 import React from 'react';
 
-/**
- * Botão reutilizável.
- * variant: 'primary' | 'outline' | 'ghost' | 'danger'
- * size: 'sm' | 'md' | 'lg'
- */
 export default function Button({
   children,
   variant = 'primary',

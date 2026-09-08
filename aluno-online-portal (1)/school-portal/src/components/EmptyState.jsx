@@ -1,11 +1,6 @@
 import React from 'react';
 import { Inbox } from 'lucide-react';
 
-/**
- * Estado vazio padrão: ícone de caixa de entrada + mensagem.
- * Usado nas telas que ainda não possuem registros (Material Didático,
- * Avaliações Online, Atividades).
- */
 export default function EmptyState({ message = 'Nenhum registro encontrado' }) {
   return (
     <div className="flex flex-col items-center justify-center text-center py-14 text-slate-500">

@@ -7,7 +7,6 @@ const bimesters = ['1º Bimestre', '2º Bimestre', '3º Bimestre', '4º Bimestre
 
 export default function Boletim() {
   const [activeBimester, setActiveBimester] = useState(0);
-  // Controla quais disciplinas estão expandidas (mostrando detalhamento da nota)
   const [expanded, setExpanded] = useState({});
 
   function toggle(name) {
@@ -27,7 +26,6 @@ export default function Boletim() {
           </select>
         </div>
 
-        {/* Abas de bimestre */}
         <div className="flex gap-6 border-b border-slate-100 mb-2 overflow-x-auto">
           {bimesters.map((label, i) => (
             <button
@@ -44,7 +42,6 @@ export default function Boletim() {
           ))}
         </div>
 
-        {/* Lista de disciplinas */}
         <ul className="divide-y divide-slate-100">
           {subjects.map((s) => {
             const grade = [s.b1, s.b2, s.b3, s.b4][activeBimester];

@@ -1,9 +1,5 @@
 import React from 'react';
 
-/**
- * Modal genérico centralizado, com fundo escurecido.
- * Fecha ao clicar fora do card (no overlay).
- */
 export default function Modal({ open, onClose, children }) {
   if (!open) return null;
 

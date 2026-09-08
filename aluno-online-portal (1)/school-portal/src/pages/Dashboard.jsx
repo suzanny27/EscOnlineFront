@@ -18,7 +18,6 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Calendário Letivo */}
         <Card title="CALENDÁRIO LETIVO">
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-center justify-center bg-brand-50 text-brand-900 rounded-xl w-16 h-16 shrink-0">
@@ -42,7 +41,6 @@ export default function Dashboard() {
           </ul>
         </Card>
 
-        {/* Últimas Notícias */}
         <Card title="ÚLTIMAS NOTÍCIAS">
           {latestPosts.map((post, i) => (
             <div key={i}>
@@ -54,7 +52,6 @@ export default function Dashboard() {
           ))}
         </Card>
 
-        {/* Últimas Novidades */}
         <Card title="ÚLTIMAS NOVIDADES">
           {news.map((item, i) => (
             <div key={i} className="text-sm">
@@ -68,7 +65,6 @@ export default function Dashboard() {
           ))}
         </Card>
 
-        {/* Canais de Atendimento */}
         <Card title="CANAIS DE ATENDIMENTO">
           <p className="text-sm text-slate-500 mb-4">
             Você pode utilizar todos os canais abaixo para dialogar e interagir com a Secretaria

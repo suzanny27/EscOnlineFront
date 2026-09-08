@@ -20,9 +20,7 @@ import {
 } from 'lucide-react';
 import { student } from '../data/mockData';
 
-// Itens do menu principal. `key` é usado para controlar a navegação via
-// estado no componente App (ver App.jsx).
-const menuItems = [
+export const menuItems = [
   { key: 'inicio', label: 'Início', icon: Home },
   { key: 'dados-pessoais', label: 'Dados Pessoais', icon: User },
   { key: 'minha-turma', label: 'Minha Turma', icon: Users },
@@ -46,7 +44,6 @@ const footerItems = [
 export default function Sidebar({ activePage, onNavigate, isOpen, onClose, onLogout }) {
   return (
     <>
-      {/* Overlay escurecido no mobile quando o menu está aberto */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-30 md:hidden"
@@ -60,7 +57,6 @@ export default function Sidebar({ activePage, onNavigate, isOpen, onClose, onLog
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
-        {/* Cabeçalho: fecha o menu no mobile + perfil do aluno */}
         <div className="flex items-center justify-between px-5 pt-5 md:hidden">
           <span className="font-bold text-lg">Menu</span>
           <button
@@ -80,7 +76,6 @@ export default function Sidebar({ activePage, onNavigate, isOpen, onClose, onLog
           <p className="text-xs text-white/70 mt-1">{student.registration}</p>
         </div>
 
-        {/* Navegação principal com scroll independente */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
           {menuItems.map(({ key, label, icon: Icon }) => (
             <NavButton
@@ -93,7 +88,6 @@ export default function Sidebar({ activePage, onNavigate, isOpen, onClose, onLog
           ))}
         </nav>
 
-        {/* Rodapé fixo: sugestões, privacidade e sair */}
         <div className="px-3 py-4 border-t border-white/10 space-y-1">
           {footerItems.map(({ key, label, icon: Icon }) => (
             <NavButton

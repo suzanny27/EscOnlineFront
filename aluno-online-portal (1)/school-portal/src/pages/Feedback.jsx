@@ -9,7 +9,6 @@ export default function Feedback() {
   function handleSubmit(e) {
     e.preventDefault();
     if (!message.trim()) return;
-    // Mock de envio: em produção, chamar a API de suporte aqui
     setSent(true);
     setMessage('');
   }
