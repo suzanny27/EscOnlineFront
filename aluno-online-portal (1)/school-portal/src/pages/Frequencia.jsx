@@ -24,7 +24,7 @@ export default function Frequencia() {
       <Breadcrumb items={['Início', 'Frequência']} />
 
       <div className="bg-white rounded-xl2 shadow-card overflow-hidden">
-        <div className="bg-brand-400 text-white px-5 py-3 font-bold text-sm">Frequência</div>
+        <div className="px-5 py-3 border-b border-slate-100 font-bold text-sm text-slate-700">Frequência</div>
 
         <div className="p-5 md:p-6">
           <div className="flex gap-1 overflow-x-auto mb-5 border-b border-slate-100 pb-1">

@@ -19,14 +19,22 @@ import Partners from './pages/Partners';
 import Noticias from './pages/Noticias';
 import Feedback from './pages/Feedback';
 import Privacidade from './pages/Privacidade';
-import ProfessorShell from './pages_prof/layout/Shell';
-import ProfessorTurmas from './pages_prof/telas/Turmas';
-import ProfessorNotas from './pages_prof/telas/Notas';
-import ProfessorHorario from './pages_prof/telas/Horario';
-import ProfessorParceiros from './pages_prof/telas/Parceiros';
-import ProfessorCriticas from './pages_prof/telas/Criticas';
-import ResponsavelPortal from '../../../pages(jonas)/src/App.jsx';
-import GestaoPortal from '../../../escola-estadual/src/App.jsx';
+import ProfessorTurmas from './pages/professor/Turmas';
+import ProfessorDiario from './pages/professor/Diario';
+import ProfessorNotas from './pages/professor/Notas';
+import ProfessorHorario from './pages/professor/Horarios';
+import ProfessorParceiros from './pages/professor/Parceiros';
+import ProfessorCriticas from './pages/professor/Criticas';
+import GestaoHome from './pages/gestao/Home';
+import GestaoCadastros from './pages/gestao/Cadastros';
+import GestaoTurmas from './pages/gestao/Turmas';
+import ResponsavelInicio from './pages/responsavel/Inicio';
+import ResponsavelBoletim from './pages/responsavel/Boletim';
+import ResponsavelFrequencia from './pages/responsavel/Frequencia';
+import ResponsavelComunicados from './pages/responsavel/Comunicados';
+import { CadastrosProvider } from './context/CadastrosContext';
+import { teacher, guardian } from './data/mockData';
+import { Users, Star, Clock, Handshake, MessageSquareWarning, Home as HomeIcon, GraduationCap, NotebookPen, ClipboardCheck, Megaphone } from 'lucide-react';
 
 const pages = {
   inicio: { title: 'ESC Online', component: Dashboard },
@@ -46,30 +54,49 @@ const pages = {
   privacidade: { title: 'Políticas de Privacidade', component: Privacidade },
 };
 
+const professorMenuItems = [
+  { key: 'diario', label: 'Diário', icon: NotebookPen },
+  { key: 'turmas', label: 'Minhas Turmas', icon: Users },
+  { key: 'notas', label: 'Lançar Notas', icon: Star },
+  { key: 'horario', label: 'Meu Horário', icon: Clock },
+  { key: 'parceiros', label: 'Parceiros', icon: Handshake },
+  { key: 'criticas', label: 'Críticas ou Sugestões', icon: MessageSquareWarning },
+];
+
 const professorPages = {
-  turmas: { title: 'Minhas turmas', component: ProfessorTurmas },
-  notas: { title: 'Lançar notas', component: ProfessorNotas },
-  horario: { title: 'Meu horário', component: ProfessorHorario },
+  diario: { title: 'Diário', component: ProfessorDiario },
+  turmas: { title: 'Minhas Turmas', component: ProfessorTurmas },
+  notas: { title: 'Lançar Notas', component: ProfessorNotas },
+  horario: { title: 'Meu Horário', component: ProfessorHorario },
   parceiros: { title: 'Parceiros', component: ProfessorParceiros },
-  criticas: { title: 'Críticas ou sugestões', component: ProfessorCriticas },
+  criticas: { title: 'Críticas ou Sugestões', component: ProfessorCriticas },
 };
 
-function ProfessorPortal({ onLogout }) {
-  const [activePage, setActivePage] = useState('turmas');
-  const current = professorPages[activePage] ?? professorPages.turmas;
-  const PageComponent = current.component;
+const gestaoMenuItems = [
+  { key: 'home', label: 'Início', icon: HomeIcon },
+  { key: 'cadastros', label: 'Cadastros', icon: Users },
+  { key: 'turmas', label: 'Turmas', icon: GraduationCap },
+];
 
-  return (
-    <ProfessorShell
-      atual={activePage}
-      onNavegar={(page) => page === 'sair' ? onLogout() : setActivePage(page)}
-      onSair={onLogout}
-      breadcrumb={`Professor / ${current.title}`}
-    >
-      <PageComponent />
-    </ProfessorShell>
-  );
-}
+const gestaoPages = {
+  home: { title: 'Início', component: GestaoHome },
+  cadastros: { title: 'Cadastros', component: GestaoCadastros },
+  turmas: { title: 'Turmas', component: GestaoTurmas },
+};
+
+const responsavelMenuItems = [
+  { key: 'inicio', label: 'Início', icon: HomeIcon },
+  { key: 'boletim', label: 'Boletim', icon: Star },
+  { key: 'frequencia', label: 'Frequência', icon: ClipboardCheck },
+  { key: 'comunicados', label: 'Comunicados', icon: Megaphone },
+];
+
+const responsavelPages = {
+  inicio: { title: 'Início', component: ResponsavelInicio },
+  boletim: { title: 'Boletim', component: ResponsavelBoletim },
+  frequencia: { title: 'Frequência', component: ResponsavelFrequencia },
+  comunicados: { title: 'Comunicados', component: ResponsavelComunicados },
+};
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -78,8 +105,31 @@ export default function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
 
+  const isProfessor = role === 'professor';
+  const isGestao = role === 'gestao';
+  const isResponsavel = role === 'responsavel';
+
+  const currentPages = isProfessor ? professorPages : isGestao ? gestaoPages : isResponsavel ? responsavelPages : pages;
+  const currentMenuItems = isProfessor ? professorMenuItems : isGestao ? gestaoMenuItems : isResponsavel ? responsavelMenuItems : undefined;
+  const currentProfile = isProfessor
+    ? { name: teacher.name, subtitle: teacher.subject, initials: teacher.avatarInitials }
+    : isGestao
+    ? { name: 'Equipe Gestora', subtitle: 'Escola Estadual', initials: 'EG' }
+    : isResponsavel
+    ? { name: guardian.name, subtitle: `${guardian.relation} de ${guardian.childName}`, initials: guardian.avatarInitials }
+    : undefined;
+
+  function handleLogin(selectedRole) {
+    setRole(selectedRole);
+    setIsAuthenticated(true);
+    if (selectedRole === 'professor') setActivePage('turmas');
+    else if (selectedRole === 'gestao') setActivePage('home');
+    else if (selectedRole === 'responsavel') setActivePage('inicio');
+    else setActivePage('inicio');
+  }
+
   function handleNavigate(page) {
-    setActivePage(pages[page] ? page : 'inicio');
+    setActivePage(currentPages[page] ? page : Object.keys(currentPages)[0]);
     setSidebarOpen(false);
   }
 
@@ -91,37 +141,45 @@ export default function App() {
   }
 
   if (!isAuthenticated) {
-    return <Login onLogin={(selectedRole) => { setRole(selectedRole); setIsAuthenticated(true); }} />;
+    return <Login onLogin={handleLogin} />;
   }
 
-  if (role === 'professor') {
-    return <ProfessorPortal onLogout={confirmLogout} />;
-  }
+  const PageComponent = currentPages[activePage]?.component ?? Object.values(currentPages)[0].component;
+  const pageTitle = currentPages[activePage]?.title ?? Object.values(currentPages)[0].title;
 
-  if (role === 'responsavel') {
-    return <ResponsavelPortal initialAuthenticated onLogout={confirmLogout} />;
-  }
+  const accentByRole = {
+    professor: { 900: '30 64 122', 700: '31 111 209', 500: '59 142 240', 400: '75 163 247', 50: '234 244 255' },
+    gestao: { 900: '122 87 9', 700: '184 136 12', 500: '220 165 18', 400: '238 179 24', 50: '254 246 227' },
+    responsavel: { 900: '6 95 58', 700: '4 154 87', 500: '0 181 99', 400: '0 196 108', 50: '232 250 241' },
+  };
+  const accent = accentByRole[role];
+  const accentStyle = accent ? {
+    '--accent-900': accent[900],
+    '--accent-700': accent[700],
+    '--accent-500': accent[500],
+    '--accent-400': accent[400],
+    '--accent-50': accent[50],
+  } : undefined;
 
-  if (role === 'gestao') {
-    return <GestaoPortal />;
-  }
-
-  return (
-    <div className="min-h-screen flex bg-slate-100">
+  const content = (
+    <div className="min-h-screen flex bg-slate-50" style={accentStyle}>
+      <Sidebar
+        activePage={activePage}
+        onNavigate={handleNavigate}
+        isOpen={isSidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onLogout={() => setLogoutModalOpen(true)}
+        items={currentMenuItems}
+        profile={currentProfile}
+      />
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar
-          title={pages[activePage]?.title ?? 'ESC Online'}
+          title={pageTitle}
           onMenuClick={() => setSidebarOpen(true)}
-          activePage={activePage}
-          onNavigate={handleNavigate}
-          onLogout={confirmLogout}
         />
 
         <main className="flex-1 p-4 md:p-8">
-          {(() => {
-            const PageComponent = pages[activePage]?.component ?? Dashboard;
-            return <PageComponent />;
-          })()}
+          {isGestao ? <PageComponent onNavigate={handleNavigate} /> : <PageComponent />}
         </main>
       </div>
 
@@ -141,4 +199,6 @@ export default function App() {
       </Modal>
     </div>
   );
+
+  return isGestao ? <CadastrosProvider>{content}</CadastrosProvider> : content;
 }

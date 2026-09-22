@@ -25,8 +25,8 @@ export default function Calendario() {
               onClick={() => setActiveMonth(i)}
               className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap transition-colors ${
                 activeMonth === i
-                  ? 'bg-brand-400 text-white'
-                  : 'text-slate-400 hover:bg-brand-50 hover:text-brand-700'
+                  ? 'bg-slate-900 text-white'
+                  : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'
               }`}
             >
               {m}

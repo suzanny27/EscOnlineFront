@@ -1,4 +1,7 @@
 
+import { BookOpen, ClipboardList, FileEdit, GraduationCap, Sparkles, Users } from 'lucide-react';
+import { MATRICULAS, TURMAS } from './SchoolData';
+
 export const student = {
   name: 'João Pedro Andrade Souza',
   registration: '2026001234',
@@ -34,15 +37,15 @@ export const news = [
   {
     date: '21/08/2026',
     tag: 'NOVO',
-    title: 'Aluno Online passa a contar com cadastro de e-mail pessoal',
+    title: 'Cadastro de e-mail pessoal agora disponível',
     excerpt:
-      'Agora é possível inserir seu login com e-mail próprio para facilitar a recuperação de conta e o acesso à plataforma.',
+      'Agora é possível cadastrar um e-mail pessoal para facilitar a recuperação de conta e melhorar o acesso ao portal.',
   },
 ];
 
 export const latestPosts = [
   {
-    title: 'Tutorial de Acesso ao Aluno Online - Tutorial de Acesso ao Aluno Online',
+    title: 'Guia de acesso ao portal do aluno',
     date: '18/08/2026 às 09:30',
   },
 ];
@@ -148,4 +151,77 @@ export const classmates = [
   'Fábio Lima', 'Gustavo Silva', 'Heitor Gonçalves', 'João Victor',
   'Jonas Vicente', 'Jonny Lacerda', 'Jorge Felipe', 'Kyara Duarte',
   'Letícia Silva', 'Levi Mesquita', 'Lívia Gonçalves', 'Marina Alves',
+];
+export const teacher = {
+  name: 'Carlos Eduardo',
+  subject: 'Professor de Matemática',
+  avatarInitials: 'CE',
+};
+
+export const teacherClasses = [
+  { id: 1, name: '3ª Série J', info: 'Téc. em Desenv. de Sistemas · Integral', students: 28, avgAttendance: 94, avgGrade: 8.1 },
+  { id: 2, name: '2ª Série A', info: 'Ensino Médio Integral', students: 31, avgAttendance: 90, avgGrade: 7.6 },
+  { id: 3, name: '1ª Série B', info: 'Ensino Médio Integral', students: 30, avgAttendance: 91, avgGrade: 7.9 },
+];
+
+export const eventosEscola = [
+  { id: 1, data: '2026-08-28', titulo: 'Reunião de Pais', horario: '19:00', local: 'Auditório' },
+  { id: 2, data: '2026-09-02', titulo: 'Semana da Pátria', horario: '08:00', local: 'Pátio Central' },
+  { id: 3, data: '2026-09-10', titulo: 'Conselho de Classe', horario: '14:00', local: 'Sala dos Professores' },
+];
+
+export const matriculasEscola = [
+  { id: 1, nome: 'Rafael Lima', status: 'Pendente' },
+  { id: 2, nome: 'Sofia Mendes', status: 'Em análise' },
+  { id: 3, nome: 'Bruno Castro', status: 'Aprovada' },
+];
+
+export const noticiasEscola = [
+  { id: 1, titulo: 'Início do 3º Bimestre', status: 'Publicado' },
+  { id: 2, titulo: 'Resultado da Olimpíada de Matemática', status: 'Publicado' },
+  { id: 3, titulo: 'Campanha do Agasalho', status: 'Publicado' },
+];
+
+export const DEFAULT_FOOTER_STATS = [
+  { icon: Users, label: 'Cadastros', value: '418', caption: 'pessoas na comunidade' },
+  { icon: BookOpen, label: 'Planejamento', value: '24', caption: 'em revisão esta semana' },
+  { icon: Sparkles, label: 'Eventos', value: '3', caption: 'nos próximos 15 dias' },
+];
+
+export const CADASTROS_FOOTER_STATS = [
+  { icon: GraduationCap, label: 'Turmas', value: String(TURMAS.length), caption: '3 anos · 4 cursos técnicos' },
+  { icon: ClipboardList, label: 'Matrículas', value: String(MATRICULAS.length), caption: 'com pendência documental' },
+  { icon: FileEdit, label: 'Notas', value: '2º', caption: 'bimestre em andamento' },
+];
+
+export const diarioTurma = {
+  '3ª Série J': [
+    { aluno: 'Amanda Felix Veras', nota: '9,0', faltas: 1, status: 'ok' },
+    { aluno: 'Anna Narah Queiroz Silva', nota: '7,1', faltas: 3, status: 'ok' },
+    { aluno: 'Antonia Ticyane Oliveira', nota: '9,4', faltas: 0, status: 'ok' },
+    { aluno: 'Antonio Eduardo da Silva', nota: '5,1', faltas: 6, status: 'atencao' },
+    { aluno: 'Danyelle Batista Alencar', nota: '8,4', faltas: 2, status: 'ok' },
+  ],
+  '2ª Série A': [
+    { aluno: 'Eduardo Franklin da Silva', nota: '6,7', faltas: 4, status: 'ok' },
+    { aluno: 'Estela Garcia da Silva', nota: '9,8', faltas: 0, status: 'ok' },
+    { aluno: 'Gustavo Silva Goncalves', nota: '5,1', faltas: 8, status: 'atencao' },
+  ],
+  '1ª Série B': [
+    { aluno: 'Heitor Goncalves Teixeira', nota: '7,9', faltas: 2, status: 'ok' },
+    { aluno: 'Joao Victor da Silva Guedes', nota: '6,8', faltas: 5, status: 'ok' },
+  ],
+};
+
+export const guardian = {
+  name: 'Marcos Souza',
+  relation: 'Pai',
+  childName: student.name,
+  avatarInitials: 'MS',
+};
+
+export const comunicadosResponsavel = [
+  { id: 1, data: '25/08/2026', titulo: 'Lembrete: provas bimestrais na próxima semana', resumo: 'Confira o cronograma de avaliações do 2º bimestre por turma no calendário letivo.' },
+  { id: 2, data: '21/08/2026', titulo: 'Aluno Online passa a contar com cadastro de e-mail pessoal', resumo: 'Agora é possível inserir login com e-mail próprio para facilitar o acesso à plataforma.' },
+  { id: 3, data: '18/08/2026', titulo: 'Reunião de pais e mestres', resumo: 'Reunião marcada para apresentação dos resultados do 2º bimestre.' },
 ];

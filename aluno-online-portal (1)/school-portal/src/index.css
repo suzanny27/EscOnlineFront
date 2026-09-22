@@ -1,3 +1,11 @@
+:root {
+  --accent-900: 91 33 182;
+  --accent-700: 124 58 237;
+  --accent-500: 159 103 245;
+  --accent-400: 182 126 249;
+  --accent-50: 245 240 255;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -123,4 +131,17 @@ input:focus-visible {
   .po-painel-top { align-items: flex-start; flex-direction: column; }
   .po-table { min-width: 680px; }
   .po-painel { overflow-x: auto; }
+}
+
+.input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input:focus {
+  border-color: #b67ef9;
 }

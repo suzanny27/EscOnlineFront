@@ -12,8 +12,8 @@ export default function Atividades() {
 
   return (
     <div>
-      <div className="bg-brand-400 rounded-xl2 px-5 py-3 mb-6">
-        <Breadcrumb items={['Início', 'Atividades']} variant="dark" />
+      <div className="mb-6 overflow-hidden rounded-xl2 border border-slate-100 bg-white shadow-card">
+        <Breadcrumb items={['Início', 'Atividades']} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -25,7 +25,7 @@ export default function Atividades() {
                 onClick={() => setActiveTab(i)}
                 className={`flex-1 py-3 text-sm font-semibold border-b-2 transition-colors ${
                   activeTab === i
-                    ? 'border-brand-400 text-brand-700'
+                    ? 'border-slate-900 text-slate-800'
                     : 'border-transparent text-slate-400 hover:text-slate-600'
                 }`}
               >
@@ -37,7 +37,7 @@ export default function Atividades() {
         </div>
 
         <div className="bg-white rounded-xl2 shadow-card overflow-hidden h-fit">
-          <div className="bg-brand-400 text-white px-5 py-3 font-bold text-sm">
+          <div className="border-b border-slate-100 bg-slate-50 px-5 py-3 font-bold text-sm text-slate-700">
             Desempenho de Atividades
           </div>
           <div className="grid grid-cols-3 divide-x divide-slate-100 text-center py-6">

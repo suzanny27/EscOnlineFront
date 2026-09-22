@@ -19,8 +19,8 @@ export default function Dashboard() {
     <div className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2">
         <Card title="CALENDÁRIO LETIVO">
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col items-center justify-center bg-brand-50 text-brand-900 rounded-xl w-16 h-16 shrink-0">
+          <div className="flex items-center gap-4 rounded-xl border border-brand-50 bg-brand-50/50 p-3">
+            <div className="flex flex-col items-center justify-center bg-white text-brand-900 rounded-xl w-16 h-16 shrink-0 shadow-sm ring-1 ring-brand-100">
               <span className="text-2xl font-extrabold leading-none">{today.day}</span>
               <span className="text-[10px] font-bold tracking-wide">{today.weekday}</span>
             </div>
@@ -31,25 +31,27 @@ export default function Dashboard() {
           </div>
           <ul className="mt-4 divide-y divide-slate-100 text-sm">
             {calendarEvents.slice(1).map((ev, i) => (
-              <li key={i} className="flex items-center justify-between py-2">
+              <li key={i} className="flex items-center justify-between gap-3 py-2.5">
                 <span className="text-slate-600">
                   {ev.day}/{ev.month} · {ev.weekday}
                 </span>
-                <span className="text-slate-400 text-xs">{ev.title}</span>
+                <span className="text-right text-slate-400 text-xs">{ev.title}</span>
               </li>
             ))}
           </ul>
         </Card>
 
         <Card title="ÚLTIMAS NOTÍCIAS">
-          {latestPosts.map((post, i) => (
-            <div key={i}>
-              <a href="#" className="font-semibold text-brand-700 hover:underline block">
-                {post.title}
-              </a>
-              <p className="text-xs text-slate-400 mt-1">{post.date}</p>
-            </div>
-          ))}
+          <div className="space-y-4">
+            {latestPosts.map((post, i) => (
+              <div key={i} className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+                <a href="#" className="font-semibold text-brand-700 hover:underline block">
+                  {post.title}
+                </a>
+                <p className="text-xs text-slate-400 mt-1">{post.date}</p>
+              </div>
+            ))}
+          </div>
         </Card>
 
         <Card title="ÚLTIMAS NOVIDADES">

@@ -74,7 +74,7 @@ export default function FichaBiografica() {
               onClick={() => setActiveTab(i)}
               className={`pb-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
                 activeTab === i
-                  ? 'border-brand-400 text-brand-700'
+                  ? 'border-slate-800 text-slate-800'
                   : 'border-transparent text-slate-400 hover:text-slate-600'
               }`}
             >
@@ -83,7 +83,7 @@ export default function FichaBiografica() {
           ))}
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg p-3 mb-5">
+        <div className="border border-slate-200 bg-slate-50 text-slate-600 text-xs rounded-lg p-3 mb-5">
           {current.notice}
         </div>
 
@@ -100,8 +100,8 @@ export default function FichaBiografica() {
         {current.hasAddress && (
           <div className="mt-8">
             <div className="flex items-center gap-3 mb-4">
-              <h3 className="font-bold text-brand-900 text-sm tracking-wide">ENDEREÇO</h3>
-              <div className="h-0.5 flex-1 bg-brand-400" />
+              <h3 className="font-bold text-slate-700 text-sm tracking-wide">ENDEREÇO</h3>
+              <div className="h-0.5 flex-1 bg-slate-200" />
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
               <FormField label="CEP" />
@@ -146,7 +146,7 @@ function FormField({ label }) {
       <input
         type="text"
         placeholder={label.toUpperCase()}
-        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-600 placeholder:text-slate-400 outline-none transition-colors focus:bg-white focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30"
+        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs text-slate-600 placeholder:text-slate-400 outline-none transition-colors focus:bg-white focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
       />
     </div>
   );

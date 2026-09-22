@@ -7,13 +7,13 @@ export default function MinhaTurma() {
     <div>
       <Breadcrumb items={['Início', 'Minha Turma']} />
 
-      <div className="bg-brand-400 text-white rounded-xl2 px-5 py-4 mb-6 grid gap-x-8 gap-y-1 sm:grid-cols-2 lg:grid-cols-4 text-sm">
-        <p><span className="font-bold">CREDE:</span> {classInfo.crede}</p>
-        <p><span className="font-bold">ESCOLA:</span> {classInfo.school}</p>
-        <p><span className="font-bold">TURMA:</span> {classInfo.className}</p>
+      <div className="bg-white border border-slate-100 rounded-xl2 shadow-card px-5 py-4 mb-6 grid gap-x-8 gap-y-1.5 sm:grid-cols-2 lg:grid-cols-4 text-sm">
+        <p><span className="font-semibold text-slate-400">CREDE:</span> <span className="text-slate-700">{classInfo.crede}</span></p>
+        <p><span className="font-semibold text-slate-400">ESCOLA:</span> <span className="text-slate-700">{classInfo.school}</span></p>
+        <p><span className="font-semibold text-slate-400">TURMA:</span> <span className="text-slate-700">{classInfo.className}</span></p>
         <div className="flex gap-6">
-          <p><span className="font-bold">ANO:</span> {classInfo.year}</p>
-          <p><span className="font-bold">LETIVO:</span> {classInfo.status}</p>
+          <p><span className="font-semibold text-slate-400">ANO:</span> <span className="text-slate-700">{classInfo.year}</span></p>
+          <p><span className="font-semibold text-slate-400">LETIVO:</span> <span className="text-slate-700">{classInfo.status}</span></p>
         </div>
       </div>
 

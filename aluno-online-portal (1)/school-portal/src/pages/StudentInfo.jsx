@@ -6,22 +6,27 @@ import { student, school } from '../data/mockData';
 export default function StudentInfo() {
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-extrabold text-brand-900">Dados Pessoais</h2>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-2xl font-extrabold text-slate-900">Dados Pessoais</h2>
+        <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+          Perfil do aluno
+        </span>
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title="INFORMAÇÕES DO ALUNO">
-          <div className="flex items-start gap-4 mb-5">
-            <div className="w-16 h-16 rounded-full bg-brand-50 flex items-center justify-center text-brand-700 font-bold text-lg shrink-0">
+          <div className="mb-5 flex items-start gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-slate-900 text-lg font-bold text-white">
               {student.avatarInitials}
             </div>
-            <div className="text-sm text-slate-600 space-y-1">
+            <div className="space-y-1 text-sm text-slate-600">
               <p><span className="font-semibold text-slate-800">Matrícula:</span> {student.registration}</p>
               <p><span className="font-semibold text-slate-800">Nome:</span> {student.name}</p>
               <p><span className="font-semibold text-slate-800">Nascimento:</span> {student.birthDate}</p>
             </div>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg p-3 mb-4">
+          <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
             Mantenha seu e-mail pessoal atualizado para recuperar sua conta institucional quando
             precisar. Atualize o e-mail pessoal abaixo clicando no ícone de editar.
           </div>
@@ -33,18 +38,18 @@ export default function StudentInfo() {
           <FieldRow label="Mãe" value={student.mother} />
           <FieldRow label="Responsável" value={student.guardian} />
 
-          <div className="flex items-center gap-2 mt-4 text-sm text-brand-700">
+          <div className="mt-4 flex items-center gap-2 text-sm text-slate-700">
             <FileText size={16} />
             <span>Declaração de Matrícula</span>
           </div>
-          <button className="flex items-center gap-2 mt-2 text-sm font-semibold text-brand-400 hover:text-brand-700 active:text-brand-900 transition-colors">
+          <button className="mt-2 flex items-center gap-2 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">
             <Download size={16} />
             Baixar declaração
           </button>
         </Card>
 
         <Card title="INFORMAÇÕES DA ESCOLA">
-          <div className="text-sm text-slate-600 space-y-2 mb-4">
+          <div className="mb-4 space-y-2 text-sm text-slate-600">
             <p><span className="font-semibold text-slate-800">INEP:</span> {school.inep}</p>
             <p><span className="font-semibold text-slate-800">Escola:</span> {school.name}</p>
             <p><span className="font-semibold text-slate-800">Endereço:</span> {school.address}</p>
@@ -55,10 +60,10 @@ export default function StudentInfo() {
             <p><span className="font-semibold text-slate-800">E-mail:</span> {school.email}</p>
           </div>
 
-          <div className="relative w-full h-48 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
+          <div className="relative h-48 w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
             <div className="absolute inset-0 opacity-40 bg-[linear-gradient(45deg,theme(colors.slate.200)_25%,transparent_25%,transparent_75%,theme(colors.slate.200)_75%),linear-gradient(45deg,theme(colors.slate.200)_25%,transparent_25%,transparent_75%,theme(colors.slate.200)_75%)] bg-[length:20px_20px] bg-[position:0_0,10px_10px]" />
-            <div className="relative flex flex-col items-center text-slate-400">
-              <MapPin size={28} className="text-brand-400 mb-1" />
+            <div className="relative flex h-full flex-col items-center justify-center text-slate-400">
+              <MapPin size={28} className="mb-1 text-slate-500" />
               <span className="text-xs">Mapa da localização da escola</span>
             </div>
           </div>

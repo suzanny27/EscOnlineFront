@@ -1,12 +1,40 @@
 import React, { useState } from 'react';
-import { GraduationCap, Presentation, Users2, School, ChevronRight } from 'lucide-react';
+import { GraduationCap, Presentation, Heart, Building2, ChevronRight, ChevronLeft } from 'lucide-react';
 import Button from '../components/Button';
 
 const roles = [
-  { key: 'aluno', label: 'Aluno', icon: GraduationCap },
-  { key: 'professor', label: 'Professor', icon: Presentation },
-  { key: 'responsavel', label: 'Responsável', icon: Users2 },
-  { key: 'gestao', label: 'Gestão escolar', icon: School },
+  {
+    key: 'aluno',
+    label: 'Aluno',
+    icon: GraduationCap,
+    classes: 'border-[#b67ef9] text-[#7c3aed] hover:bg-[#b67ef9] hover:border-[#b67ef9] hover:text-white',
+    ring: 'focus:ring-[#b67ef9]/30 focus:border-[#b67ef9]',
+    button: 'bg-[#b67ef9] hover:bg-[#a563f2]',
+  },
+  {
+    key: 'professor',
+    label: 'Professor',
+    icon: Presentation,
+    classes: 'border-[#4ba3f7] text-[#2f7dd6] hover:bg-[#4ba3f7] hover:border-[#4ba3f7] hover:text-white',
+    ring: 'focus:ring-[#4ba3f7]/30 focus:border-[#4ba3f7]',
+    button: 'bg-[#4ba3f7] hover:bg-[#358de0]',
+  },
+  {
+    key: 'responsavel',
+    label: 'Responsável',
+    icon: Heart,
+    classes: 'border-[#00c46c] text-[#049a57] hover:bg-[#00c46c] hover:border-[#00c46c] hover:text-white',
+    ring: 'focus:ring-[#00c46c]/30 focus:border-[#00c46c]',
+    button: 'bg-[#00c46c] hover:bg-[#00ad5f]',
+  },
+  {
+    key: 'gestao',
+    label: 'Gestão escolar',
+    icon: Building2,
+    classes: 'border-[#eeb318] text-[#b8880c] hover:bg-[#eeb318] hover:border-[#eeb318] hover:text-white',
+    ring: 'focus:ring-[#eeb318]/30 focus:border-[#eeb318]',
+    button: 'bg-[#eeb318] hover:bg-[#d9a30f]',
+  },
 ];
 
 export default function Login({ onLogin }) {
@@ -19,62 +47,60 @@ export default function Login({ onLogin }) {
     onLogin(selectedRole);
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
-      <div className="w-full max-w-4xl bg-white rounded-xl2 shadow-card-hover overflow-hidden grid md:grid-cols-2">
-        {/* Painel esquerdo */}
-        <div className="bg-brand-900 text-white p-10 md:p-12 flex flex-col justify-center relative overflow-hidden">
-          <div className="absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-white/5" />
-          <div className="absolute top-0 left-0 w-24 h-24 rounded-br-[3rem] bg-white/5" />
+  const role = roles.find((r) => r.key === selectedRole);
 
-          <div className="relative z-10">
-            <GraduationCap size={32} className="text-brand-400 mb-6" />
-            <h2 className="text-3xl font-extrabold mb-3 leading-tight">
-              Bem-vindo de volta
-            </h2>
-            <p className="text-white/70 leading-relaxed">
-              Acesse sua conta e continue de onde parou — notas, faltas e
-              atividades em um só lugar.
-            </p>
-          </div>
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        backgroundColor: '#f7f7fb',
+        backgroundImage:
+          'linear-gradient(to right, rgba(26,18,53,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(26,18,53,0.12) 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+      }}
+    >
+      <div className="w-full max-w-md">
+        <div className="flex items-center gap-2 mb-6 px-1">
+          <GraduationCap size={22} className="text-slate-700" />
+          <span className="font-bold text-slate-800">ESC Online</span>
         </div>
 
-        {/* Painel direito */}
-        <div className="p-8 md:p-12 flex flex-col justify-center">
+        <div className="bg-white rounded-xl2 shadow-card-hover p-7 sm:p-8">
           {!selectedRole ? (
             <>
-              <h3 className="text-2xl font-bold text-slate-800 mb-1">
-                Como você quer entrar?
-              </h3>
-              <p className="text-sm text-slate-400 mb-7">
-                Escolha seu perfil para continuar
-              </p>
+              <h1 className="text-xl font-bold text-slate-800 mb-1">Quem está acessando?</h1>
+              <p className="text-sm text-slate-400 mb-6">Escolha seu perfil pra continuar.</p>
 
-              <div className="space-y-3">
-                {roles.map(({ key, label, icon: Icon }) => (
+              <div className="space-y-2.5">
+                {roles.map(({ key, label, icon: Icon, classes }) => (
                   <button
                     key={key}
                     onClick={() => setSelectedRole(key)}
-                    className="w-full flex items-center justify-between gap-3 bg-white hover:bg-brand-50 border border-slate-200 hover:border-brand-400 rounded-xl px-5 py-4 transition-all duration-150 group"
+                    className={`w-full flex items-center justify-between gap-3 bg-white border-2 rounded-xl px-4 py-3.5 font-semibold text-sm transition-colors duration-150 ${classes}`}
                   >
-                    <span className="flex items-center gap-3 font-semibold text-slate-700">
-                      <span className="w-9 h-9 rounded-full bg-brand-50 group-hover:bg-brand-400/10 flex items-center justify-center transition-colors">
-                        <Icon size={18} className="text-brand-500" />
-                      </span>
+                    <span className="flex items-center gap-3 whitespace-normal text-left">
+                      <Icon size={18} className="shrink-0" />
                       {label}
                     </span>
-                    <ChevronRight size={18} className="text-slate-300 group-hover:text-brand-400 transition-colors" />
+                    <ChevronRight size={16} className="shrink-0 opacity-60" />
                   </button>
                 ))}
               </div>
             </>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="mb-2">
-                <h3 className="text-2xl font-bold text-slate-800 mb-1">Entrar</h3>
-                <p className="text-sm text-slate-400">
-                  Como <span className="font-semibold text-brand-500">{roles.find(r => r.key === selectedRole)?.label}</span>
-                </p>
+              <button
+                type="button"
+                onClick={() => setSelectedRole(null)}
+                className="flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-slate-600 mb-1"
+              >
+                <ChevronLeft size={14} />
+                Voltar
+              </button>
+
+              <div>
+                <h1 className="text-xl font-bold text-slate-800">Entrar como {role.label.toLowerCase()}</h1>
+                <p className="text-sm text-slate-400 mt-0.5">Digite seus dados de acesso.</p>
               </div>
 
               <div>
@@ -86,7 +112,7 @@ export default function Login({ onLogin }) {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20"
+                  className={`w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 ${role.ring}`}
                   placeholder="Digite sua matrícula"
                   required
                 />
@@ -101,20 +127,18 @@ export default function Login({ onLogin }) {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:border-brand-400 focus:ring-2 focus:ring-brand-400/20"
+                  className={`w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 ${role.ring}`}
                   placeholder="••••••••"
                   required
                 />
               </div>
 
-              <div className="flex items-center gap-3 pt-2">
-                <Button type="button" variant="ghost" onClick={() => setSelectedRole(null)}>
-                  Voltar
-                </Button>
-                <Button type="submit" variant="primary" className="flex-1">
-                  Entrar
-                </Button>
-              </div>
+              <button
+                type="submit"
+                className={`w-full text-white font-semibold py-2.5 rounded-lg transition-colors ${role.button}`}
+              >
+                Entrar
+              </button>
             </form>
           )}
         </div>
