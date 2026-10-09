@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { NotebookPen } from 'lucide-react';
 import EmptyState from '../../components/EmptyState';
+import AtestadosPanel from '../../components/AtestadosPanel';
 import { listarAlunos, listarNotas, listarVinculosProfessor } from '../../services/schoolApi';
 
 export default function Diario({ matricula }) {
+  const [activeTab, setActiveTab] = useState('diario');
   const [linhas, setLinhas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -31,6 +33,14 @@ export default function Diario({ matricula }) {
 
   return (
     <div>
+      <div className="mb-4 inline-flex rounded-lg bg-slate-100 p-1" role="group" aria-label="Seção do diário">
+        <button type="button" onClick={() => setActiveTab('diario')} aria-pressed={activeTab === 'diario'} className={`inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold ${activeTab === 'diario' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}><NotebookPen size={16} />Diário</button>
+        <button type="button" onClick={() => setActiveTab('atestados')} aria-pressed={activeTab === 'atestados'} className={`rounded-md px-3 py-2 text-sm font-semibold ${activeTab === 'atestados' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}>Atestados</button>
+      </div>
+
+      {activeTab === 'atestados' ? (
+        <AtestadosPanel perfil="professor" professorIdInicial={matricula} />
+      ) : <>
       <div className="mb-6">
         <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
           <NotebookPen size={20} className="text-brand-400" />
@@ -65,6 +75,7 @@ export default function Diario({ matricula }) {
           </table>
         </div>
       </div>
+      </>}
     </div>
   );
 }

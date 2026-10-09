@@ -117,6 +117,9 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
     const next = {};
     if (!funcionarioForm.nomeCompleto.trim()) next.nomeCompleto = 'Informe o nome completo.';
     if (!funcionarioForm.cargo.trim()) next.cargo = 'Informe o cargo.';
+    if (funcionarioForm.cargo.toLowerCase().includes('coordenador') && !funcionarioForm.email.trim()) {
+      next.email = 'Informe o e-mail do coordenador.';
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -468,7 +471,7 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
                   <input type="text" value={funcionarioForm.nomeCompleto} onChange={(e) => updateFuncionario({ nomeCompleto: e.target.value })} className={inputCls(errors.nomeCompleto)} autoFocus />
                 </Field>
                 <Field label="Telefone"><input type="text" value={funcionarioForm.telefone} onChange={(e) => updateFuncionario({ telefone: e.target.value })} className="input" /></Field>
-                <Field label="E-mail"><input type="email" value={funcionarioForm.email} onChange={(e) => updateFuncionario({ email: e.target.value })} className="input" /></Field>
+                <Field label="E-mail" error={errors.email} required={funcionarioForm.cargo.toLowerCase().includes('coordenador')}><input type="email" value={funcionarioForm.email} onChange={(e) => updateFuncionario({ email: e.target.value })} className={inputCls(errors.email)} /></Field>
                 <Field label="Cargo" error={errors.cargo} required><select value={funcionarioForm.cargo} onChange={(e) => updateFuncionario({ cargo: e.target.value })} className={inputCls(errors.cargo)}><option value="">Selecione</option>{CARGOS_FUNCIONARIO.map((cargo) => <option key={cargo} value={cargo}>{cargo}</option>)}</select></Field>
               </div>
             </FormSection>

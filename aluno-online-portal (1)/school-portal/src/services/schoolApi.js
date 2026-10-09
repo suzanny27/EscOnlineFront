@@ -91,6 +91,27 @@ export async function cadastrarNotaEscrita(payload) {
   return data;
 }
 
+export async function listarAtestadosDoAluno(matricula) {
+  const { data } = await api.get(`/Atestados/aluno/${matricula}`);
+  return data;
+}
+
+export async function listarAtestadosDoProfessor(professorId) {
+  const { data } = await api.get(`/Atestados/professor/${professorId}`);
+  return data;
+}
+
+export async function enviarAtestado({ arquivo, matricula, professorId }) {
+  const formData = new FormData();
+  formData.append('arquivo', arquivo);
+  formData.append('matricula', String(matricula));
+  if (professorId != null) formData.append('professorId', String(professorId));
+  const { data } = await api.post('/Atestados/upload', formData);
+  return data;
+}
+
+export const excluirAtestado = (id) => api.delete(`/Atestados/${id}`);
+
 export async function buscarBoletim(matricula) {
   const { data } = await api.get(`/boletins/aluno/${matricula}/notas`);
   return data;
