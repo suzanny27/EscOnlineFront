@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { GraduationCap, Presentation, Heart, Building2, ChevronRight, ChevronLeft } from 'lucide-react';
 import Button from '../components/Button';
 
+const TEST_ACCESS_PASSWORD = 'portal-teste-2026';
+
 const roles = [
   {
     key: 'aluno',
@@ -41,9 +43,15 @@ export default function Login({ onLogin }) {
   const [selectedRole, setSelectedRole] = useState(null);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   function handleSubmit(e) {
     e.preventDefault();
+    if (password !== TEST_ACCESS_PASSWORD) {
+      setError('Senha de teste incorreta.');
+      return;
+    }
+    setError('');
     onLogin(selectedRole, username.trim());
   }
 
@@ -91,7 +99,7 @@ export default function Login({ onLogin }) {
             <form onSubmit={handleSubmit} className="space-y-4">
               <button
                 type="button"
-                onClick={() => setSelectedRole(null)}
+                onClick={() => { setSelectedRole(null); setError(''); }}
                 className="flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-slate-600 mb-1"
               >
                 <ChevronLeft size={14} />
@@ -111,7 +119,7 @@ export default function Login({ onLogin }) {
                   id="username"
                   type="text"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => { setUsername(e.target.value); setError(''); }}
                   className={`w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 ${role.ring}`}
                   placeholder="Digite sua matrícula"
                   required
@@ -126,12 +134,14 @@ export default function Login({ onLogin }) {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); setError(''); }}
                   className={`w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none transition-colors focus:ring-2 ${role.ring}`}
                   placeholder="••••••••"
                   required
                 />
               </div>
+
+              {error && <p role="alert" className="text-sm text-rose-600">{error}</p>}
 
               <button
                 type="submit"
