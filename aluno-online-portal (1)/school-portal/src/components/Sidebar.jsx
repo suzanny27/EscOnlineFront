@@ -19,7 +19,6 @@ import {
   X,
   GraduationCap,
 } from 'lucide-react';
-import { student } from '../data/mockData';
 
 export const menuItems = [
   { key: 'inicio', label: 'Início', icon: Home },
@@ -44,7 +43,7 @@ const footerItems = [
 
 export default function Sidebar({ activePage, onNavigate, isOpen, onClose, onLogout, items, profile }) {
   const itensMenu = items ?? menuItems;
-  const perfil = profile ?? { name: student.name, subtitle: student.registration, initials: student.avatarInitials };
+  const perfil = profile ?? { name: 'Aluno', subtitle: '', initials: 'A' };
 
   return (
     <>
@@ -57,15 +56,15 @@ export default function Sidebar({ activePage, onNavigate, isOpen, onClose, onLog
       )}
 
       <aside
-        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-white border-r border-slate-100 z-40 flex flex-col
+        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-brand-900 text-white border-r border-white/10 z-40 flex flex-col
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
         <div className="flex items-center justify-between px-5 pt-5 pb-4 md:hidden">
-          <span className="font-bold text-lg text-slate-800">Menu</span>
+          <span className="font-bold text-lg text-white">Menu</span>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 active:bg-slate-200"
+            className="p-1.5 rounded-lg text-slate-300 hover:bg-white/10 active:bg-white/20"
             aria-label="Fechar menu"
           >
             <X size={22} />
@@ -74,19 +73,19 @@ export default function Sidebar({ activePage, onNavigate, isOpen, onClose, onLog
 
         <div className="flex items-center justify-between px-5 pt-5 pb-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-brand-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-brand-700 flex items-center justify-center">
               <GraduationCap size={18} className="text-white" />
             </div>
-            <span className="font-bold tracking-wide text-slate-800">ESC Online</span>
+            <span className="font-bold tracking-wide text-white">ESC Online</span>
           </div>
         </div>
 
-        <div className="flex flex-col items-center text-center px-5 pt-5 pb-4 border-b border-slate-100">
-          <div className="w-16 h-16 rounded-full bg-brand-400/15 text-brand-700 flex items-center justify-center text-xl font-bold shadow-card">
+        <div className="flex flex-col items-center text-center px-5 pt-5 pb-4 border-b border-white/10">
+          <div className="w-16 h-16 rounded-full bg-accent-mint text-brand-900 flex items-center justify-center text-xl font-bold">
             {perfil.initials}
           </div>
-          <p className="mt-3 font-bold text-sm leading-tight uppercase text-slate-800">{perfil.name}</p>
-          <p className="text-xs text-slate-400 mt-1">{perfil.subtitle}</p>
+          <p className="mt-3 font-bold text-sm leading-tight uppercase text-white">{perfil.name}</p>
+          <p className="text-xs text-slate-300 mt-1">{perfil.subtitle}</p>
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
@@ -113,7 +112,7 @@ export default function Sidebar({ activePage, onNavigate, isOpen, onClose, onLog
           ))}
           <button
             onClick={onLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 active:bg-red-100 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white active:bg-white/20 transition-colors"
           >
             <LogOut size={18} />
             Sair
@@ -131,8 +130,8 @@ function NavButton({ active, onClick, icon: Icon, label }) {
       className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
       ${
         active
-          ? 'bg-brand-50 text-brand-700 border border-brand-100 shadow-sm'
-          : 'text-slate-500 hover:bg-brand-50 hover:text-brand-700 active:bg-brand-100'
+          ? 'bg-white/10 text-white border-l-2 border-brand-700'
+          : 'text-slate-300 border-l-2 border-transparent hover:bg-white/5 hover:text-white active:bg-white/10'
       }`}
     >
       <Icon size={18} />

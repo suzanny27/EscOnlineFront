@@ -33,7 +33,6 @@ import ResponsavelBoletim from './pages/responsavel/Boletim';
 import ResponsavelFrequencia from './pages/responsavel/Frequencia';
 import ResponsavelComunicados from './pages/responsavel/Comunicados';
 import { CadastrosProvider } from './context/CadastrosContext';
-import { teacher, guardian } from './data/mockData';
 import { Users, Star, Clock, Handshake, MessageSquareWarning, Home as HomeIcon, GraduationCap, NotebookPen, ClipboardCheck, Megaphone } from 'lucide-react';
 
 const pages = {
@@ -101,6 +100,7 @@ const responsavelPages = {
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);
+  const [loginIdentifier, setLoginIdentifier] = useState('');
   const [activePage, setActivePage] = useState('inicio');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
@@ -112,15 +112,16 @@ export default function App() {
   const currentPages = isProfessor ? professorPages : isGestao ? gestaoPages : isResponsavel ? responsavelPages : pages;
   const currentMenuItems = isProfessor ? professorMenuItems : isGestao ? gestaoMenuItems : isResponsavel ? responsavelMenuItems : undefined;
   const currentProfile = isProfessor
-    ? { name: teacher.name, subtitle: teacher.subject, initials: teacher.avatarInitials }
+    ? { name: 'Professor', subtitle: loginIdentifier ? `ID ${loginIdentifier}` : '', initials: 'P' }
     : isGestao
     ? { name: 'Equipe Gestora', subtitle: 'Escola Estadual', initials: 'EG' }
     : isResponsavel
-    ? { name: guardian.name, subtitle: `${guardian.relation} de ${guardian.childName}`, initials: guardian.avatarInitials }
-    : undefined;
+    ? { name: 'Responsável', subtitle: loginIdentifier ? `ID ${loginIdentifier}` : '', initials: 'R' }
+    : { name: 'Aluno', subtitle: loginIdentifier ? `Matrícula ${loginIdentifier}` : '', initials: 'A' };
 
-  function handleLogin(selectedRole) {
+  function handleLogin(selectedRole, identifier) {
     setRole(selectedRole);
+    setLoginIdentifier(identifier);
     setIsAuthenticated(true);
     if (selectedRole === 'professor') setActivePage('turmas');
     else if (selectedRole === 'gestao') setActivePage('home');
@@ -136,6 +137,7 @@ export default function App() {
   function confirmLogout() {
     setIsAuthenticated(false);
     setRole(null);
+    setLoginIdentifier('');
     setLogoutModalOpen(false);
     setActivePage('inicio');
   }
@@ -148,9 +150,9 @@ export default function App() {
   const pageTitle = currentPages[activePage]?.title ?? Object.values(currentPages)[0].title;
 
   const accentByRole = {
-    professor: { 900: '30 64 122', 700: '31 111 209', 500: '59 142 240', 400: '75 163 247', 50: '234 244 255' },
-    gestao: { 900: '122 87 9', 700: '184 136 12', 500: '220 165 18', 400: '238 179 24', 50: '254 246 227' },
-    responsavel: { 900: '6 95 58', 700: '4 154 87', 500: '0 181 99', 400: '0 196 108', 50: '232 250 241' },
+    professor: { 900: '1 1 32', 700: '252 76 2', 500: '239 44 193', 400: '189 187 255', 50: '200 246 249' },
+    gestao: { 900: '1 1 32', 700: '252 76 2', 500: '239 44 193', 400: '189 187 255', 50: '200 246 249' },
+    responsavel: { 900: '1 1 32', 700: '252 76 2', 500: '239 44 193', 400: '189 187 255', 50: '200 246 249' },
   };
   const accent = accentByRole[role];
   const accentStyle = accent ? {
@@ -179,7 +181,11 @@ export default function App() {
         />
 
         <main className="flex-1 p-4 md:p-8">
-          {isGestao ? <PageComponent onNavigate={handleNavigate} /> : <PageComponent />}
+          {isGestao
+            ? <PageComponent onNavigate={handleNavigate} />
+            : activePage === 'boletim' && !isProfessor && !isResponsavel
+              ? <PageComponent matricula={loginIdentifier} />
+              : <PageComponent matricula={loginIdentifier} />}
         </main>
       </div>
 

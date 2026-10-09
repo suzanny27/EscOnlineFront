@@ -9,17 +9,17 @@ export default function Button({
   ...props
 }) {
   const base =
-    'inline-flex items-center justify-center gap-2 font-semibold rounded-full transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed select-none';
+    'inline-flex items-center justify-center gap-2 font-mono font-medium rounded-sm transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed select-none uppercase';
 
   const variants = {
     primary:
-      'bg-brand-400 text-white shadow-card hover:bg-brand-700 active:bg-brand-900 active:scale-[0.98]',
+      'bg-brand-900 text-white hover:bg-brand-700 active:bg-brand-900',
     outline:
-      'border-2 border-brand-400 text-brand-700 bg-white hover:bg-brand-50 active:bg-brand-50 active:scale-[0.98]',
+      'border border-black/10 text-brand-900 bg-white hover:bg-slate-100 active:bg-slate-100',
     ghost:
-      'text-brand-700 hover:bg-brand-50 active:bg-brand-50/80',
+      'text-brand-900 hover:bg-slate-100 active:bg-slate-100',
     danger:
-      'bg-red-500 text-white hover:bg-red-600 active:bg-red-700 active:scale-[0.98]',
+      'bg-red-500 text-white hover:bg-red-600 active:bg-red-700',
   };
 
   const sizes = {

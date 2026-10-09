@@ -23,9 +23,9 @@ export default {
         neutral: {
           bg: '#f3f7f8',
         },
-        'brand-navy': '#1e1b4b',
-        'brand-action': '#4a77c6',
-        'brand-mid': '#6366f1',
+        'brand-navy': 'rgb(var(--accent-900) / <alpha-value>)',
+        'brand-action': 'rgb(var(--accent-400) / <alpha-value>)',
+        'brand-mid': 'rgb(var(--accent-700) / <alpha-value>)',
         surface: {
           card: '#ffffff',
           muted: '#f1f5f9',

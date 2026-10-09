@@ -1,9 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap');
+
 :root {
-  --accent-900: 91 33 182;
-  --accent-700: 124 58 237;
-  --accent-500: 159 103 245;
-  --accent-400: 182 126 249;
-  --accent-50: 245 240 255;
+  --accent-900: 1 1 32;
+  --accent-700: 252 76 2;
+  --accent-500: 239 44 193;
+  --accent-400: 189 187 255;
+  --accent-50: 200 246 249;
+  --canvas: #ffffff;
+  --canvas-dark: #010120;
+  --hairline: #ebebeb;
+  --body-muted: #999999;
+  --font-display: 'Space Grotesk', 'Helvetica Neue', sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SFMono-Regular', monospace;
 }
 
 @tailwind base;
@@ -15,27 +23,72 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--canvas-dark);
+  background: var(--canvas);
+  font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
 }
 
 button:focus-visible,
 a:focus-visible,
-input:focus-visible {
-  outline: 2px solid #1f8a9e;
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #fc4c02;
   outline-offset: 2px;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f8a9e;
-  border-radius: 999px;
+  background: #999999;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+@layer base {
+  button {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  input,
+  select,
+  textarea {
+    font-family: var(--font-display);
+    border-radius: 4px;
+  }
+
+  th {
+    background: var(--hairline);
+    color: var(--body-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+}
+
+.portal-navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: linear-gradient(90deg, #fc4c02, #ef2cc1, #bdbbff);
+  pointer-events: none;
+}
+
+.shadow-card,
+.shadow-card-hover {
+  border: 1px solid var(--hairline);
+  box-shadow: none !important;
 }
 
 .po-shell {
@@ -135,13 +188,13 @@ input:focus-visible {
 
 .input {
   width: 100%;
-  border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  padding: 0.625rem 1rem;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0.625rem 0.75rem;
   font-size: 0.875rem;
   outline: none;
   transition: border-color 0.15s;
 }
 .input:focus {
-  border-color: #b67ef9;
+  border-color: #fc4c02;
 }

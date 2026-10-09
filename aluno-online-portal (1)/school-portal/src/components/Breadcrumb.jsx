@@ -6,7 +6,7 @@ export default function Breadcrumb({ items, variant = 'light' }) {
 
   return (
     <nav
-      className={`flex items-center gap-1.5 text-xs font-medium mb-4 ${
+      className={`flex items-center gap-1.5 font-mono text-[11px] font-medium uppercase mb-4 ${
         isDark ? 'text-white/90' : 'text-slate-400'
       }`}
       aria-label="breadcrumb"

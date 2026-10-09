@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
-import { calendarEvents, months } from '../data/mockData';
+import EmptyState from '../components/EmptyState';
+
+const months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 
 export default function Calendario() {
-  const [activeMonth, setActiveMonth] = useState(7);
+  const [activeMonth, setActiveMonth] = useState(new Date().getMonth());
+  const currentYear = new Date().getFullYear();
 
   return (
     <div>
@@ -12,10 +15,7 @@ export default function Calendario() {
       <div className="bg-white rounded-xl2 shadow-card p-5 md:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h2 className="text-lg font-bold text-slate-700">Calendário</h2>
-          <select className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-600 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30">
-            <option>2026</option>
-            <option>2025</option>
-          </select>
+          <span className="text-sm font-medium text-slate-600">{currentYear}</span>
         </div>
 
         <div className="flex gap-1 overflow-x-auto mb-5 border-b border-slate-100 pb-1">
@@ -35,21 +35,7 @@ export default function Calendario() {
         </div>
 
         <div className="space-y-2">
-          {calendarEvents.map((ev, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-4 bg-slate-50 hover:bg-brand-50 rounded-xl px-4 py-3 transition-colors"
-            >
-              <div className="flex flex-col items-center justify-center w-12 shrink-0">
-                <span className="font-extrabold text-slate-700 leading-none">{ev.day}</span>
-                <span className="text-[10px] font-bold text-slate-400">{ev.weekday}</span>
-              </div>
-              <div>
-                <p className="font-semibold text-slate-700 text-sm">{ev.title}</p>
-                <p className="text-xs text-slate-400">{ev.info}</p>
-              </div>
-            </div>
-          ))}
+          <EmptyState message={`O backend ainda não fornece eventos para ${months[activeMonth]} de ${currentYear}.`} />
         </div>
       </div>
     </div>

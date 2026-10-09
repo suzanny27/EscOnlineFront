@@ -6,7 +6,6 @@ import FooterStats from '../../components/FooterStats';
 import NovoCadastroModal from '../../components/NovoCadastroModal';
 import ViewFichaModal from '../../components/ViewFichaModal';
 import { useCadastros, resumoAluno, resumoProfessor, resumoResponsavel, resumoFuncionario } from '../../context/CadastrosContext';
-import { CADASTROS_FOOTER_STATS } from '../../data/mockData';
 
 const TABS = [
   { key: 'alunos', label: 'Alunos', icon: GraduationCap },
@@ -16,7 +15,7 @@ const TABS = [
 ];
 
 export default function Cadastros() {
-  const { alunos, professores, responsaveis, funcionarios, addAluno, addProfessor, addResponsavel, addFuncionario } = useCadastros();
+  const { alunos, professores, responsaveis, funcionarios, turmas, loading, error, addAluno, addProfessor, addResponsavel, addFuncionario } = useCadastros();
   const [tab, setTab] = useState('alunos');
   const [query, setQuery] = useState('');
   const [novoCadastroAberto, setNovoCadastroAberto] = useState(false);
@@ -37,6 +36,11 @@ export default function Cadastros() {
     () => rows.filter((r) => r.name.toLowerCase().includes(query.trim().toLowerCase())),
     [rows, query]
   );
+  const footerStats = [
+    { icon: GraduationCap, label: 'Alunos', value: String(alunos.length), caption: 'carregados do backend' },
+    { icon: User, label: 'Professores', value: String(professores.length), caption: 'carregados do backend' },
+    { icon: Heart, label: 'Responsáveis', value: String(responsaveis.length), caption: 'carregados do backend' },
+  ];
 
   const abrirFicha = (row) => {
     const tipoSingular = { alunos: 'aluno', professores: 'professor', responsaveis: 'responsavel', funcionarios: 'funcionario' }[tab];
@@ -56,6 +60,8 @@ export default function Cadastros() {
       />
 
       <section className="rounded-2xl border border-slate-200 bg-surface-card p-5 shadow-card sm:p-6">
+        {loading && <p className="mb-4 text-sm text-slate-500">Carregando cadastros do backend...</p>}
+        {error && <p role="alert" className="mb-4 text-sm text-amber-700">{error}</p>}
         <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="inline-flex flex-wrap gap-1 rounded-lg bg-surface-muted p-1">
             {TABS.map(({ key, label, icon: Icon }) => (
@@ -168,15 +174,17 @@ export default function Cadastros() {
         </ul>
       </section>
 
-      <FooterStats items={CADASTROS_FOOTER_STATS} />
+      <FooterStats items={footerStats} />
 
       {novoCadastroAberto && (
         <NovoCadastroModal
+          turmasApi={turmas}
+          alunosApi={alunos}
           onClose={() => setNovoCadastroAberto(false)}
-          onSaveAluno={(dados) => { addAluno(dados); setTab('alunos'); }}
-          onSaveProfessor={(dados) => { addProfessor(dados); setTab('professores'); }}
-          onSaveResponsavel={(dados) => { addResponsavel(dados); setTab('responsaveis'); }}
-          onSaveFuncionario={(dados) => { addFuncionario(dados); setTab('funcionarios'); }}
+          onSaveAluno={async (dados) => { await addAluno(dados); setTab('alunos'); }}
+          onSaveProfessor={async (dados) => { await addProfessor(dados); setTab('professores'); }}
+          onSaveResponsavel={async (dados) => { await addResponsavel(dados); setTab('responsaveis'); }}
+          onSaveFuncionario={async (dados) => { await addFuncionario(dados); setTab('funcionarios'); }}
         />
       )}
 

@@ -1,75 +1,74 @@
-import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-import Breadcrumb from '../components/Breadcrumb';
-import { subjects } from '../data/mockData';
+import React, { useEffect, useState } from 'react';
+import { buscarBoletim } from '../services/Faltasservice';
 
-const bimesters = ['1º Bimestre', '2º Bimestre', '3º Bimestre', '4º Bimestre'];
+export default function Boletim({ matricula }) {
+  const [boletim, setBoletim] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
 
-export default function Boletim() {
-  const [activeBimester, setActiveBimester] = useState(0);
-  const [expanded, setExpanded] = useState({});
+  useEffect(() => {
+    async function carregar() {
+      try {
+        if (!matricula || !Number.isInteger(Number(matricula))) {
+          setErro('Informe uma matrícula válida para consultar o boletim.');
+          return;
+        }
+        const dados = await buscarBoletim(Number(matricula));
+        setBoletim(dados);
+      } catch (e) {
+        setErro(e.response?.data?.message || 'Não foi possível conectar ao servidor do boletim.');
+      } finally {
+        setCarregando(false);
+      }
+    }
+    carregar();
+  }, [matricula]);
 
-  function toggle(name) {
-    setExpanded((prev) => ({ ...prev, [name]: !prev[name] }));
+  if (carregando) {
+    return <p className="text-sm text-slate-400">Carregando boletim...</p>;
+  }
+
+  if (erro || !boletim) {
+    return (
+      <div className="bg-white rounded-xl2 shadow-card p-6 text-center text-sm text-slate-400">
+        {erro || 'Boletim indisponível.'}
+      </div>
+    );
   }
 
   return (
-    <div>
-      <Breadcrumb items={['Início', 'Boletim']} />
+    <div className="bg-white rounded-xl2 shadow-card overflow-hidden">
+      <div className="px-5 py-4 border-b border-slate-100">
+        <p className="font-bold text-slate-800">{boletim.nome}</p>
+        <p className="text-xs text-slate-400">{boletim.turma}</p>
+      </div>
 
-      <div className="bg-white rounded-xl2 shadow-card p-5 md:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h2 className="text-lg font-bold text-slate-700">Notas</h2>
-          <select className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 text-slate-600 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30">
-            <option>2026</option>
-            <option>2025</option>
-          </select>
-        </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-slate-100 text-left text-slate-400">
+              <th className="px-5 py-3 font-semibold">Disciplina</th>
+              <th className="px-4 py-3 font-semibold text-center">Notas</th>
+              <th className="px-4 py-3 font-semibold text-center">Média</th>
+            </tr>
+          </thead>
+          <tbody>
+            {boletim.disciplinas.map((d) => (
+              <tr key={d.disciplina} className="border-b border-slate-50 hover:bg-slate-50">
+                <td className="px-5 py-3 font-medium text-slate-700">{d.disciplina}</td>
+                <td className="px-4 py-3 text-center text-slate-500">
+                  {d.notas.join(' · ')}
+                </td>
+                <td className="px-4 py-3 text-center font-bold text-brand-600">{d.media}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        <div className="flex gap-6 border-b border-slate-100 mb-2 overflow-x-auto">
-          {bimesters.map((label, i) => (
-            <button
-              key={label}
-              onClick={() => setActiveBimester(i)}
-              className={`pb-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
-                activeBimester === i
-                  ? 'border-brand-400 text-brand-700'
-                  : 'border-transparent text-slate-400 hover:text-slate-600'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <ul className="divide-y divide-slate-100">
-          {subjects.map((s) => {
-            const grade = [s.b1, s.b2, s.b3, s.b4][activeBimester];
-            const isOpen = !!expanded[s.name];
-            return (
-              <li key={s.name}>
-                <button
-                  onClick={() => toggle(s.name)}
-                  className="w-full flex items-center justify-between py-3 text-left hover:bg-slate-50 active:bg-slate-100 transition-colors rounded-lg px-2"
-                >
-                  <span className="flex items-center gap-3">
-                    <span className="text-brand-700 font-bold w-8 text-center">{grade}</span>
-                    <span className="font-semibold text-slate-700 text-sm">{s.name}</span>
-                  </span>
-                  <ChevronDown
-                    size={18}
-                    className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                {isOpen && (
-                  <div className="px-2 pb-3 text-xs text-slate-500">
-                    Detalhamento de avaliações desta disciplina ainda não disponível.
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+      <div className="px-5 py-3 border-t border-slate-100 text-right text-sm">
+        <span className="text-slate-400">Média geral: </span>
+        <span className="font-bold text-slate-800">{boletim.mediaGeral}</span>
       </div>
     </div>
   );

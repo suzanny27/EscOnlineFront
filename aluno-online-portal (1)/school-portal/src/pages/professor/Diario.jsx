@@ -1,79 +1,66 @@
-import React, { useState } from 'react';
-import { NotebookPen, User, RefreshCw } from 'lucide-react';
-import { diarioTurma } from '../../data/mockData';
+import React, { useEffect, useState } from 'react';
+import { NotebookPen } from 'lucide-react';
+import EmptyState from '../../components/EmptyState';
+import { listarAlunos, listarNotas, listarVinculosProfessor } from '../../services/schoolApi';
 
-const turmasDisponiveis = Object.keys(diarioTurma);
+export default function Diario({ matricula }) {
+  const [linhas, setLinhas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-export default function Diario() {
-  const [turmaAtiva, setTurmaAtiva] = useState(turmasDisponiveis[0]);
-  const alunos = diarioTurma[turmaAtiva] ?? [];
+  useEffect(() => {
+    let active = true;
+    Promise.all([listarAlunos(), listarNotas(), listarVinculosProfessor()])
+      .then(([alunos, notas, vinculos]) => {
+        if (!active) return;
+        const turmasDoProfessor = new Set(vinculos
+          .filter((vinculo) => String(vinculo.professor?.idProfessor) === String(matricula))
+          .map((vinculo) => vinculo.turma?.idTurma)
+          .filter(Boolean));
+        const matriculasDosAlunos = new Set(alunos
+          .filter((aluno) => turmasDoProfessor.has(aluno.turma?.idTurma))
+          .map((aluno) => aluno.matricula));
+        setLinhas(notas.filter((nota) => matriculasDosAlunos.has(nota.aluno?.matricula)));
+      })
+      .catch((cause) => {
+        if (active) setError(cause.response?.data?.message || 'Não foi possível carregar o diário.');
+      })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [matricula]);
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div className="mb-6">
         <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
           <NotebookPen size={20} className="text-brand-400" />
           Diário
         </h2>
-
-        <div className="flex flex-wrap gap-2">
-          {turmasDisponiveis.map((turma) => (
-            <button
-              key={turma}
-              onClick={() => setTurmaAtiva(turma)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                turmaAtiva === turma
-                  ? 'bg-brand-400 text-white'
-                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-              }`}
-            >
-              {turma}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="bg-white rounded-xl2 shadow-card overflow-hidden">
-        <div className="flex items-center gap-2 px-5 py-3 bg-brand-50 text-brand-700 text-xs font-medium">
-          <RefreshCw size={13} />
-          Nota e frequência sincronizadas automaticamente do sistema de correção
-        </div>
-
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left text-slate-400">
                 <th className="px-5 py-3 font-semibold">Aluno</th>
                 <th className="px-4 py-3 font-semibold text-center">Nota</th>
-                <th className="px-4 py-3 font-semibold text-center">Faltas</th>
+                <th className="px-4 py-3 font-semibold text-center">Bimestre</th>
               </tr>
             </thead>
             <tbody>
-              {alunos.map((a) => (
-                <tr key={a.aluno} className="border-b border-slate-50 hover:bg-slate-50">
+              {linhas.map((linha) => (
+                <tr key={linha.idNota} className="border-b border-slate-50 hover:bg-slate-50">
                   <td className="px-5 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-brand-50 flex items-center justify-center shrink-0">
-                        <User size={15} className="text-brand-400" />
-                      </div>
-                      <span className="font-medium text-slate-700">{a.aluno}</span>
-                    </div>
+                    <span className="font-medium text-slate-700">{linha.aluno?.nome ?? `Matrícula ${linha.aluno?.matricula ?? '—'}`}</span>
                   </td>
-                  <td className={`px-4 py-3 text-center font-bold ${a.status === 'atencao' ? 'text-red-500' : 'text-emerald-600'}`}>
-                    {a.nota}
-                  </td>
-                  <td className={`px-4 py-3 text-center font-semibold ${a.faltas >= 6 ? 'text-red-500' : 'text-slate-600'}`}>
-                    {a.faltas}
-                  </td>
+                  <td className="px-4 py-3 text-center text-slate-600">{linha.disciplina?.nome ?? '—'}</td>
+                  <td className="px-4 py-3 text-center font-bold text-slate-700">{linha.valor}</td>
+                  <td className="px-4 py-3 text-center text-slate-600">{linha.bimestre}º</td>
                 </tr>
               ))}
-              {alunos.length === 0 && (
-                <tr>
-                  <td colSpan={3} className="py-8 text-center text-sm text-slate-400">
-                    Nenhum aluno cadastrado nesta turma.
-                  </td>
-                </tr>
-              )}
+              {!loading && linhas.length === 0 && <tr><td colSpan={4} className="py-8"><EmptyState message={error || 'Nenhuma nota disponível para as turmas deste professor.'} /></td></tr>}
+              {loading && <tr><td colSpan={4} className="py-8 text-center text-sm text-slate-400">Carregando notas...</td></tr>}
             </tbody>
           </table>
         </div>

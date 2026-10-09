@@ -1,6 +1,5 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { getCurso, getTurma } from '../data/SchoolData';
 
 const LABELS_ALUNO = {
   nomeCompleto: 'Nome completo', nomeSocial: 'Nome social', dataNascimento: 'Data de nascimento',
@@ -25,10 +24,7 @@ const LABELS_PROFESSOR = {
 export default function ViewFichaModal({ tipo, registro, onClose }) {
   if (!registro) return null;
   const isAluno = tipo === 'aluno';
-  const labels = isAluno ? LABELS_ALUNO : LABELS_PROFESSOR;
-  const curso = isAluno ? getCurso(registro.cursoId) : null;
-  const turma = isAluno ? getTurma(registro.turmaId) : null;
-  const turmasProfessor = !isAluno ? (registro.turmasIds ?? []).map((id) => getTurma(id)?.nome).filter(Boolean) : [];
+  const labels = isAluno ? LABELS_ALUNO : tipo === 'professor' ? LABELS_PROFESSOR : {};
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
@@ -48,14 +44,13 @@ export default function ViewFichaModal({ tipo, registro, onClose }) {
         <div className="flex-1 overflow-y-auto px-6 py-5">
           {isAluno && (
             <div className="mb-5 flex flex-wrap gap-1.5">
-              {curso && <span className="rounded-full bg-brand-action/10 px-2.5 py-1 text-xs font-medium text-brand-action">{curso.nome}</span>}
-              {turma && <span className="rounded-full bg-brand-action/10 px-2.5 py-1 text-xs font-medium text-brand-action">{turma.nome}</span>}
+              {registro.turma && <span className="rounded-full bg-brand-action/10 px-2.5 py-1 text-xs font-medium text-brand-action">{registro.turma.anoSerie} · {registro.turma.nome}</span>}
             </div>
           )}
-          {!isAluno && turmasProfessor.length > 0 && (
+          {!isAluno && registro.turmas?.length > 0 && (
             <div className="mb-5 flex flex-wrap gap-1.5">
-              {turmasProfessor.map((nome) => (
-                <span key={nome} className="rounded-full bg-brand-action/10 px-2.5 py-1 text-xs font-medium text-brand-action">{nome}</span>
+              {registro.turmas.map((turma) => (
+                <span key={turma.idTurma} className="rounded-full bg-brand-action/10 px-2.5 py-1 text-xs font-medium text-brand-action">{turma.nome}</span>
               ))}
             </div>
           )}

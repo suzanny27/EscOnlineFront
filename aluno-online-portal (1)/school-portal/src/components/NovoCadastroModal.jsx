@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { X, UserPlus, Users as UsersIcon, Heart, Briefcase, Check, ChevronLeft } from 'lucide-react';
-import { CURSOS, ANOS, TURMAS } from '../data/SchoolData';
 
 const ETNIAS = ['Branca', 'Preta', 'Parda', 'Amarela', 'Indígena', 'Prefere não informar'];
 const SEXO_GENERO = ['Feminino', 'Masculino', 'Prefere não informar'];
@@ -8,7 +7,7 @@ const PARENTESCOS = ['Mãe', 'Pai', 'Avô/Avó', 'Tio/Tia', 'Irmão/Irmã', 'Res
 const TURNOS = ['Manhã', 'Tarde', 'Noite'];
 const GRAUS_FORMACAO = ['Licenciatura', 'Bacharelado', 'Especialização', 'Mestrado', 'Doutorado'];
 const ESTADOS = ['CE', 'PE', 'PB', 'RN', 'PI', 'BA', 'MA', 'SP', 'RJ', 'MG', 'Outro'];
-const CARGOS_FUNCIONARIO = ['Secretário(a) escolar', 'Diretor(a)', 'Vice-diretor(a)', 'Coordenador(a) pedagógico', 'Coordenador(a) administrativo', 'Porteiro(a)', 'Auxiliar de limpeza', 'Merendeiro(a)', 'Outro'];
+const CARGOS_FUNCIONARIO = ['Secretário(a) escolar', 'Diretor(a)', 'Coordenador(a) pedagógico'];
 
 function calcularIdade(dataNascimento) {
   if (!dataNascimento) return '';
@@ -25,7 +24,7 @@ function calcularIdade(dataNascimento) {
 const ALUNO_INICIAL = {
   nomeCompleto: '', nomeSocial: '', dataNascimento: '', email: '', telefone: '',
   cpf: '', rg: '', etnia: '', sexoGenero: '',
-  endereco: '', numero: '', complemento: '', bairro: '', cidade: 'Pacatuba', estado: 'CE', cep: '',
+  endereco: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '', cep: '',
   responsavelPrincipal: '', parentesco: 'Responsável legal', telefoneResponsavel: '', emailResponsavel: '',
   ano: '', cursoId: '', turmaId: '',
   dataMatricula: '', turno: 'Manhã', observacoes: '',
@@ -34,7 +33,7 @@ const ALUNO_INICIAL = {
 const PROFESSOR_INICIAL = {
   nomeCompleto: '', nomeSocial: '', dataNascimento: '', email: '', telefone: '',
   cpf: '', rg: '', etnia: '',
-  endereco: '', numero: '', complemento: '', bairro: '', cidade: 'Pacatuba', estado: 'CE', cep: '',
+  endereco: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '', cep: '',
   formacaoAcademica: '', instituicaoFormacao: '', grauFormacao: '',
   areaAtuacao: '', disciplinas: '', turmasIds: [], turno: 'Manhã',
   dataContratacao: '', observacoes: '',
@@ -42,29 +41,26 @@ const PROFESSOR_INICIAL = {
 
 const RESPONSAVEL_INICIAL = {
   nomeCompleto: '', cpf: '', telefone: '', email: '', parentesco: 'Mãe', alunoVinculado: '',
-  endereco: '', numero: '', complemento: '', bairro: '', cidade: 'Pacatuba', estado: 'CE', cep: '', observacoes: '',
+  endereco: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '', cep: '', observacoes: '',
 };
 
 const FUNCIONARIO_INICIAL = {
   nomeCompleto: '', cpf: '', telefone: '', email: '', cargo: '', dataContratacao: '',
-  endereco: '', numero: '', complemento: '', bairro: '', cidade: 'Pacatuba', estado: 'CE', cep: '', observacoes: '',
+  endereco: '', numero: '', complemento: '', bairro: '', cidade: '', estado: '', cep: '', observacoes: '',
 };
 
-export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfessor, onSaveResponsavel, onSaveFuncionario }) {
+export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfessor, onSaveResponsavel, onSaveFuncionario, turmasApi = [], alunosApi = [] }) {
   const [tipo, setTipo] = useState(null);
   const [alunoForm, setAlunoForm] = useState(ALUNO_INICIAL);
   const [professorForm, setProfessorForm] = useState(PROFESSOR_INICIAL);
   const [responsavelForm, setResponsavelForm] = useState(RESPONSAVEL_INICIAL);
   const [funcionarioForm, setFuncionarioForm] = useState(FUNCIONARIO_INICIAL);
   const [errors, setErrors] = useState({});
+  const [saveError, setSaveError] = useState('');
   const [saved, setSaved] = useState(false);
 
   const idadeAluno = calcularIdade(alunoForm.dataNascimento);
   const idadeProfessor = calcularIdade(professorForm.dataNascimento);
-
-  const turmasDisponiveisAluno = TURMAS.filter(
-    (t) => (!alunoForm.ano || t.ano === alunoForm.ano) && (!alunoForm.cursoId || t.cursoId === alunoForm.cursoId)
-  );
 
   const updateAluno = (patch) => setAlunoForm((f) => ({ ...f, ...patch }));
   const updateProfessor = (patch) => setProfessorForm((f) => ({ ...f, ...patch }));
@@ -80,23 +76,16 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
     }));
   };
 
-  const cursosDoProfessor = useMemo(() => {
-    const cursoIds = new Set(professorForm.turmasIds.map((id) => TURMAS.find((t) => t.id === id)?.cursoId));
-    return CURSOS.filter((c) => cursoIds.has(c.id)).map((c) => c.nome);
-  }, [professorForm.turmasIds]);
-
-  const anosDoProfessor = useMemo(() => {
-    const anos = new Set(professorForm.turmasIds.map((id) => TURMAS.find((t) => t.id === id)?.ano));
-    return ANOS.filter((a) => anos.has(a));
-  }, [professorForm.turmasIds]);
+  const turmasProfessorSelecionadas = useMemo(
+    () => turmasApi.filter((turma) => professorForm.turmasIds.includes(String(turma.idTurma))),
+    [professorForm.turmasIds, turmasApi]
+  );
 
   const validateAluno = () => {
     const next = {};
     if (!alunoForm.nomeCompleto.trim()) next.nomeCompleto = 'Informe o nome completo do aluno.';
     if (!alunoForm.dataNascimento) next.dataNascimento = 'Informe a data de nascimento.';
     if (!alunoForm.cpf.trim()) next.cpf = 'Informe o CPF do aluno.';
-    if (!alunoForm.ano) next.ano = 'Selecione o ano.';
-    if (!alunoForm.cursoId) next.cursoId = 'Selecione o curso.';
     if (!alunoForm.turmaId) next.turmaId = 'Selecione a turma.';
     if (!alunoForm.responsavelPrincipal.trim()) next.responsavelPrincipal = 'Informe o responsável principal.';
     setErrors(next);
@@ -127,25 +116,45 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
   const validateFuncionario = () => {
     const next = {};
     if (!funcionarioForm.nomeCompleto.trim()) next.nomeCompleto = 'Informe o nome completo.';
-    if (!funcionarioForm.cpf.trim()) next.cpf = 'Informe o CPF.';
     if (!funcionarioForm.cargo.trim()) next.cargo = 'Informe o cargo.';
     setErrors(next);
     return Object.keys(next).length === 0;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    setSaveError('');
     if (tipo === 'aluno') {
       if (!validateAluno()) return;
-      onSaveAluno({ ...alunoForm });
+      try {
+        await onSaveAluno({ ...alunoForm });
+      } catch (error) {
+        setSaveError(error.response?.data?.message || error.message || 'Não foi possível salvar o cadastro.');
+        return;
+      }
     } else if (tipo === 'professor') {
       if (!validateProfessor()) return;
-      onSaveProfessor({ ...professorForm });
+      try {
+        await onSaveProfessor({ ...professorForm });
+      } catch (error) {
+        setSaveError(error.response?.data?.message || error.message || 'Não foi possível salvar o cadastro.');
+        return;
+      }
     } else if (tipo === 'responsavel') {
       if (!validateResponsavel()) return;
-      onSaveResponsavel({ ...responsavelForm });
+      try {
+        await onSaveResponsavel({ ...responsavelForm });
+      } catch (error) {
+        setSaveError(error.response?.data?.message || error.message || 'Não foi possível salvar o cadastro.');
+        return;
+      }
     } else {
       if (!validateFuncionario()) return;
-      onSaveFuncionario({ ...funcionarioForm });
+      try {
+        await onSaveFuncionario({ ...funcionarioForm });
+      } catch (error) {
+        setSaveError(error.response?.data?.message || error.message || 'Não foi possível salvar o cadastro.');
+        return;
+      }
     }
     setSaved(true);
     setTimeout(onClose, 800);
@@ -153,6 +162,7 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
 
   const handleClear = () => {
     setErrors({});
+    setSaveError('');
     if (tipo === 'aluno') setAlunoForm(ALUNO_INICIAL);
     else if (tipo === 'professor') setProfessorForm(PROFESSOR_INICIAL);
     else if (tipo === 'responsavel') setResponsavelForm(RESPONSAVEL_INICIAL);
@@ -299,23 +309,11 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
             </FormSection>
 
             <FormSection title="Matrícula">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <Field label="Ano" error={errors.ano} required>
-                  <select value={alunoForm.ano} onChange={(e) => updateAluno({ ano: e.target.value, turmaId: '' })} className={inputCls(errors.ano)}>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="Turma" error={errors.turmaId} required span2>
+                  <select value={alunoForm.turmaId} onChange={(e) => updateAluno({ turmaId: e.target.value })} className={inputCls(errors.turmaId)}>
                     <option value="">Selecione</option>
-                    {ANOS.map((a) => <option key={a} value={a}>{a}</option>)}
-                  </select>
-                </Field>
-                <Field label="Curso" error={errors.cursoId} required>
-                  <select value={alunoForm.cursoId} onChange={(e) => updateAluno({ cursoId: e.target.value, turmaId: '' })} className={inputCls(errors.cursoId)}>
-                    <option value="">Selecione</option>
-                    {CURSOS.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
-                  </select>
-                </Field>
-                <Field label="Turma" error={errors.turmaId} required>
-                  <select value={alunoForm.turmaId} onChange={(e) => updateAluno({ turmaId: e.target.value })} disabled={!alunoForm.ano || !alunoForm.cursoId} className={inputCls(errors.turmaId)}>
-                    <option value="">Selecione</option>
-                    {turmasDisponiveisAluno.map((t) => <option key={t.id} value={t.id}>{t.nome}</option>)}
+                    {turmasApi.map((turma) => <option key={turma.idTurma} value={String(turma.idTurma)}>{turma.anoSerie} · {turma.nome}</option>)}
                   </select>
                 </Field>
                 <Field label="Data de matrícula"><input type="date" value={alunoForm.dataMatricula} onChange={(e) => updateAluno({ dataMatricula: e.target.value })} className="input" /></Field>
@@ -405,19 +403,21 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
                   Turmas em que atua {errors.turmasIds && <span className="text-rose-500">— {errors.turmasIds}</span>}
                 </p>
                 <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
-                  {TURMAS.map((t) => (
-                    <label key={t.id} className={`flex items-center gap-1.5 rounded-lg border p-2 text-xs ${professorForm.turmasIds.includes(t.id) ? 'border-brand-action bg-brand-action/5' : 'border-slate-200'}`}>
-                      <input type="checkbox" checked={professorForm.turmasIds.includes(t.id)} onChange={() => toggleTurmaProfessor(t.id)} className="h-3.5 w-3.5 rounded border-slate-300 text-brand-action focus:ring-brand-action" />
-                      {t.nome}
+                  {turmasApi.map((turma) => {
+                    const turmaId = String(turma.idTurma);
+                    return (
+                    <label key={turmaId} className={`flex items-center gap-1.5 rounded-lg border p-2 text-xs ${professorForm.turmasIds.includes(turmaId) ? 'border-brand-action bg-brand-action/5' : 'border-slate-200'}`}>
+                      <input type="checkbox" checked={professorForm.turmasIds.includes(turmaId)} onChange={() => toggleTurmaProfessor(turmaId)} className="h-3.5 w-3.5 rounded border-slate-300 text-brand-action focus:ring-brand-action" />
+                      {turma.anoSerie} · {turma.nome}
                     </label>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
-              {(cursosDoProfessor.length > 0 || anosDoProfessor.length > 0) && (
+              {turmasProfessorSelecionadas.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 rounded-lg bg-surface-muted p-3 text-xs text-slate-500">
-                  {cursosDoProfessor.length > 0 && <span>Cursos: <strong className="text-slate-700">{cursosDoProfessor.join(', ')}</strong></span>}
-                  {anosDoProfessor.length > 0 && <span className="ml-3">Anos: <strong className="text-slate-700">{anosDoProfessor.join(', ')}</strong></span>}
+                  <span>Turmas: <strong className="text-slate-700">{turmasProfessorSelecionadas.map((turma) => turma.nome).join(', ')}</strong></span>
                 </div>
               )}
 
@@ -441,7 +441,12 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
             <FormSection title="Vínculo">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field label="Parentesco"><select value={responsavelForm.parentesco} onChange={(e) => updateResponsavel({ parentesco: e.target.value })} className="input">{PARENTESCOS.map((p) => <option key={p} value={p}>{p}</option>)}</select></Field>
-                <Field label="Nome do aluno vinculado" error={errors.alunoVinculado} required><input type="text" value={responsavelForm.alunoVinculado} onChange={(e) => updateResponsavel({ alunoVinculado: e.target.value })} className={inputCls(errors.alunoVinculado)} /></Field>
+                <Field label="Aluno vinculado" error={errors.alunoVinculado} required>
+                  <select value={responsavelForm.alunoVinculado} onChange={(e) => updateResponsavel({ alunoVinculado: e.target.value })} className={inputCls(errors.alunoVinculado)}>
+                    <option value="">Selecione um aluno</option>
+                    {alunosApi.map((aluno) => <option key={aluno.matricula} value={aluno.nomeCompleto}>{aluno.nomeCompleto} · {aluno.matricula}</option>)}
+                  </select>
+                </Field>
               </div>
             </FormSection>
             <FormSection title="Endereço">
@@ -462,24 +467,15 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
                 <Field label="Nome completo" error={errors.nomeCompleto} required span2>
                   <input type="text" value={funcionarioForm.nomeCompleto} onChange={(e) => updateFuncionario({ nomeCompleto: e.target.value })} className={inputCls(errors.nomeCompleto)} autoFocus />
                 </Field>
-                <Field label="CPF" error={errors.cpf} required><input type="text" value={funcionarioForm.cpf} onChange={(e) => updateFuncionario({ cpf: e.target.value })} className={inputCls(errors.cpf)} /></Field>
                 <Field label="Telefone"><input type="text" value={funcionarioForm.telefone} onChange={(e) => updateFuncionario({ telefone: e.target.value })} className="input" /></Field>
                 <Field label="E-mail"><input type="email" value={funcionarioForm.email} onChange={(e) => updateFuncionario({ email: e.target.value })} className="input" /></Field>
                 <Field label="Cargo" error={errors.cargo} required><select value={funcionarioForm.cargo} onChange={(e) => updateFuncionario({ cargo: e.target.value })} className={inputCls(errors.cargo)}><option value="">Selecione</option>{CARGOS_FUNCIONARIO.map((cargo) => <option key={cargo} value={cargo}>{cargo}</option>)}</select></Field>
-                <Field label="Data de contratação"><input type="date" value={funcionarioForm.dataContratacao} onChange={(e) => updateFuncionario({ dataContratacao: e.target.value })} className="input" /></Field>
               </div>
-            </FormSection>
-            <FormSection title="Endereço">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field label="CEP"><input type="text" value={funcionarioForm.cep} onChange={(e) => updateFuncionario({ cep: e.target.value })} className="input" /></Field>
-                <Field label="Estado"><select value={funcionarioForm.estado} onChange={(e) => updateFuncionario({ estado: e.target.value })} className="input">{ESTADOS.map((s) => <option key={s} value={s}>{s}</option>)}</select></Field>
-                <Field label="Cidade"><input type="text" value={funcionarioForm.cidade} onChange={(e) => updateFuncionario({ cidade: e.target.value })} className="input" /></Field>
-                <Field label="Endereço"><input type="text" value={funcionarioForm.endereco} onChange={(e) => updateFuncionario({ endereco: e.target.value })} className="input" /></Field>
-              </div>
-              <Field label="Observações"><textarea value={funcionarioForm.observacoes} onChange={(e) => updateFuncionario({ observacoes: e.target.value })} rows={2} className="input resize-none" /></Field>
             </FormSection>
           </div>
         )}
+
+        {saveError && <p role="alert" className="border-t border-rose-100 px-6 py-3 text-sm text-rose-700">{saveError}</p>}
 
         {tipo && !saved && (
           <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4">
@@ -490,7 +486,7 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
               <button onClick={onClose} className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-surface-muted">
                 Cancelar
               </button>
-              <button onClick={handleSave} className="rounded-lg bg-brand-action px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-600">
+              <button onClick={handleSave} className="rounded-lg bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
                 Salvar cadastro
               </button>
             </div>

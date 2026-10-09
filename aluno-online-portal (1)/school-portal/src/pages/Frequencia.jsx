@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
-import { months } from '../data/mockData';
+import EmptyState from '../components/EmptyState';
 import { buscarFrequencia } from '../services/Faltasservice';
 
+const months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+
 export default function Frequencia() {
-  const [activeMonth, setActiveMonth] = useState(7);
+  const [activeMonth, setActiveMonth] = useState(new Date().getMonth());
   const [attendance, setAttendance] = useState([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -43,7 +45,9 @@ export default function Frequencia() {
             ))}
           </div>
 
-          <div className="overflow-x-auto">
+          {carregando ? <p className="py-8 text-center text-sm text-slate-400">Carregando frequência...</p> : attendance.length === 0 ? (
+            <EmptyState message="A API de frequência ainda não está disponível." />
+          ) : <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-slate-400 border-b border-slate-100">
@@ -77,7 +81,7 @@ export default function Frequencia() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </div>}
         </div>
       </div>
     </div>

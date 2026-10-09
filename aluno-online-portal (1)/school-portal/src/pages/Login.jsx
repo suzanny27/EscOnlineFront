@@ -7,33 +7,33 @@ const roles = [
     key: 'aluno',
     label: 'Aluno',
     icon: GraduationCap,
-    classes: 'border-[#b67ef9] text-[#7c3aed] hover:bg-[#b67ef9] hover:border-[#b67ef9] hover:text-white',
-    ring: 'focus:ring-[#b67ef9]/30 focus:border-[#b67ef9]',
-    button: 'bg-[#b67ef9] hover:bg-[#a563f2]',
+    classes: 'border-slate-200 text-brand-900 hover:bg-brand-50 hover:border-brand-700',
+    ring: 'focus:ring-brand-700/30 focus:border-brand-700',
+    button: 'bg-brand-900 hover:bg-brand-700',
   },
   {
     key: 'professor',
     label: 'Professor',
     icon: Presentation,
-    classes: 'border-[#4ba3f7] text-[#2f7dd6] hover:bg-[#4ba3f7] hover:border-[#4ba3f7] hover:text-white',
-    ring: 'focus:ring-[#4ba3f7]/30 focus:border-[#4ba3f7]',
-    button: 'bg-[#4ba3f7] hover:bg-[#358de0]',
+    classes: 'border-slate-200 text-brand-900 hover:bg-brand-50 hover:border-brand-700',
+    ring: 'focus:ring-brand-700/30 focus:border-brand-700',
+    button: 'bg-brand-900 hover:bg-brand-700',
   },
   {
     key: 'responsavel',
     label: 'Responsável',
     icon: Heart,
-    classes: 'border-[#00c46c] text-[#049a57] hover:bg-[#00c46c] hover:border-[#00c46c] hover:text-white',
-    ring: 'focus:ring-[#00c46c]/30 focus:border-[#00c46c]',
-    button: 'bg-[#00c46c] hover:bg-[#00ad5f]',
+    classes: 'border-slate-200 text-brand-900 hover:bg-brand-50 hover:border-brand-700',
+    ring: 'focus:ring-brand-700/30 focus:border-brand-700',
+    button: 'bg-brand-900 hover:bg-brand-700',
   },
   {
     key: 'gestao',
     label: 'Gestão escolar',
     icon: Building2,
-    classes: 'border-[#eeb318] text-[#b8880c] hover:bg-[#eeb318] hover:border-[#eeb318] hover:text-white',
-    ring: 'focus:ring-[#eeb318]/30 focus:border-[#eeb318]',
-    button: 'bg-[#eeb318] hover:bg-[#d9a30f]',
+    classes: 'border-slate-200 text-brand-900 hover:bg-brand-50 hover:border-brand-700',
+    ring: 'focus:ring-brand-700/30 focus:border-brand-700',
+    button: 'bg-brand-900 hover:bg-brand-700',
   },
 ];
 
@@ -44,7 +44,7 @@ export default function Login({ onLogin }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onLogin(selectedRole);
+    onLogin(selectedRole, username.trim());
   }
 
   const role = roles.find((r) => r.key === selectedRole);
@@ -53,19 +53,19 @@ export default function Login({ onLogin }) {
     <div
       className="min-h-screen flex items-center justify-center p-4"
       style={{
-        backgroundColor: '#f7f7fb',
+        backgroundColor: '#010120',
         backgroundImage:
-          'linear-gradient(to right, rgba(26,18,53,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(26,18,53,0.12) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
+          'linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px)',
+        backgroundSize: '32px 32px',
       }}
     >
       <div className="w-full max-w-md">
         <div className="flex items-center gap-2 mb-6 px-1">
-          <GraduationCap size={22} className="text-slate-700" />
-          <span className="font-bold text-slate-800">ESC Online</span>
+          <GraduationCap size={22} className="text-accent-mint" />
+          <span className="font-bold text-white">ESC Online</span>
         </div>
 
-        <div className="bg-white rounded-xl2 shadow-card-hover p-7 sm:p-8">
+        <div className="bg-white rounded-xl2 border border-white/10 shadow-card-hover p-7 sm:p-8">
           {!selectedRole ? (
             <>
               <h1 className="text-xl font-bold text-slate-800 mb-1">Quem está acessando?</h1>

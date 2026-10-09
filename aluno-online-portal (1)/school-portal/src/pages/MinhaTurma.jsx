@@ -1,33 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Breadcrumb from '../components/Breadcrumb';
-import { classInfo, classmates } from '../data/mockData';
+import EmptyState from '../components/EmptyState';
+import { listarAlunos } from '../services/schoolApi';
 
-export default function MinhaTurma() {
+export default function MinhaTurma({ matricula }) {
+  const [aluno, setAluno] = useState(null);
+  const [colegas, setColegas] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    listarAlunos()
+      .then((alunos) => {
+        if (!active) return;
+        const atual = alunos.find((item) => String(item.matricula) === String(matricula));
+        setAluno(atual ?? null);
+        setColegas(atual?.turma?.idTurma
+          ? alunos.filter((item) => item.turma?.idTurma === atual.turma.idTurma && item.matricula !== atual.matricula)
+          : []);
+      })
+      .catch((cause) => {
+        if (active) setError(cause.response?.data?.message || 'Não foi possível carregar a turma.');
+      });
+    return () => { active = false; };
+  }, [matricula]);
+
   return (
     <div>
       <Breadcrumb items={['Início', 'Minha Turma']} />
 
-      <div className="bg-white border border-slate-100 rounded-xl2 shadow-card px-5 py-4 mb-6 grid gap-x-8 gap-y-1.5 sm:grid-cols-2 lg:grid-cols-4 text-sm">
-        <p><span className="font-semibold text-slate-400">CREDE:</span> <span className="text-slate-700">{classInfo.crede}</span></p>
-        <p><span className="font-semibold text-slate-400">ESCOLA:</span> <span className="text-slate-700">{classInfo.school}</span></p>
-        <p><span className="font-semibold text-slate-400">TURMA:</span> <span className="text-slate-700">{classInfo.className}</span></p>
-        <div className="flex gap-6">
-          <p><span className="font-semibold text-slate-400">ANO:</span> <span className="text-slate-700">{classInfo.year}</span></p>
-          <p><span className="font-semibold text-slate-400">LETIVO:</span> <span className="text-slate-700">{classInfo.status}</span></p>
+      {error ? <EmptyState message={error} /> : aluno?.turma ? (
+        <div className="space-y-5">
+          <div className="rounded-xl2 bg-white p-5 text-sm shadow-card">
+            <p className="font-semibold text-slate-800">{aluno.turma.anoSerie} · {aluno.turma.nome}</p>
+          </div>
+          {colegas.length ? (
+            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {colegas.map((colega) => <li key={colega.matricula} className="rounded-lg bg-white p-4 text-sm font-medium text-slate-700 shadow-card">{colega.nome}</li>)}
+            </ul>
+          ) : <EmptyState message="Nenhum outro aluno está vinculado a esta turma." />}
         </div>
-      </div>
-
-      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-        {classmates.map((name) => (
-          <button
-            key={name}
-            className="bg-white rounded-xl2 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 active:translate-y-0 transition-all p-4 flex flex-col items-center text-center gap-2"
-          >
-            <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-b from-sky-200 to-emerald-300" />
-            <span className="text-xs font-semibold text-slate-700 uppercase">{name}</span>
-          </button>
-        ))}
-      </div>
+      ) : <EmptyState message={aluno ? 'O backend não informou a turma deste aluno.' : 'Aluno não encontrado na lista do backend.'} />}
     </div>
   );
 }
