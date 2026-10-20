@@ -1,0 +1,29 @@
+# Ignore
+backend/src/main/resources/application.properties
+
+# Node / Frontend
+node_modules/
+**/node_modules/
+
+dist/
+**/dist/
+
+# Variáveis de ambiente
+.env
+*.env
+
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
