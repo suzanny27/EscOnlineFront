@@ -68,7 +68,7 @@ export default function Turmas() {
       setModalAberto(false);
       setRefresh((value) => value + 1);
     } catch (cause) {
-      setFormError(cause.response?.data?.message || 'Não foi possível salvar a turma.');
+      setFormError(cause.response?.data?.message || cause.message || 'Não foi possível salvar a turma.');
     } finally {
       setSalvando(false);
     }
@@ -80,7 +80,7 @@ export default function Turmas() {
       await excluirTurma(turma.idTurma);
       setRefresh((value) => value + 1);
     } catch (cause) {
-      setError(cause.response?.data?.message || 'Não foi possível excluir a turma.');
+      setError(cause.response?.data?.message || cause.message || 'Não foi possível excluir a turma.');
     }
   }
 

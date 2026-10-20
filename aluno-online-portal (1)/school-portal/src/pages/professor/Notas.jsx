@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FileText, MessageSquareText, Save, Star } from 'lucide-react';
+import { FileText, MessageSquareText, Save, Star, Trash2 } from 'lucide-react';
 import {
   cadastrarNota,
   cadastrarNotaEscrita,
+  excluirNota,
   listarAlunos,
   listarDisciplinas,
   listarNotas,
@@ -75,16 +76,16 @@ export default function Notas({ matricula: professorIdInicial }) {
 
     setSaving(true);
     try {
-      const notaSalva = await cadastrarNota({
+      await cadastrarNota({
         aluno: { matricula: Number(matricula) },
         disciplina: { idDisciplina: Number(idDisciplina) },
         bimestre: Number(bimestre),
         valor: notaValor,
       });
-      setNotas((atuais) => [notaSalva, ...atuais]);
+      setNotas(await listarNotas());
       setValor('');
     } catch (cause) {
-      setError(cause.response?.data?.message || 'Não foi possível salvar a nota.');
+      setError(cause.response?.data?.message || cause.message || 'Não foi possível salvar a nota.');
     } finally {
       setSaving(false);
     }
@@ -108,15 +109,29 @@ export default function Notas({ matricula: professorIdInicial }) {
 
     setSaving(true);
     try {
-      const salva = await cadastrarNotaEscrita({
+      await cadastrarNotaEscrita({
         feedback: feedback.trim(),
         aluno: { matricula: Number(matricula) },
         professorId: Number(professorId),
       });
-      setNotasEscritas((atuais) => [salva, ...atuais]);
+      setNotasEscritas(await listarNotasEscritasDoAluno(matricula));
       setFeedback('');
     } catch (cause) {
-      setError(cause.response?.data?.message || 'Não foi possível salvar o feedback escrito.');
+      setError(cause.response?.data?.message || cause.message || 'Não foi possível salvar o feedback escrito.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function removerNota(nota) {
+    if (!window.confirm('Excluir esta nota?')) return;
+    setError('');
+    setSaving(true);
+    try {
+      await excluirNota(nota.idNota);
+      setNotas(await listarNotas());
+    } catch (cause) {
+      setError(cause.response?.data?.message || cause.message || 'Não foi possível excluir a nota.');
     } finally {
       setSaving(false);
     }
@@ -205,6 +220,7 @@ export default function Notas({ matricula: professorIdInicial }) {
                 <th className="px-4 py-3 font-semibold">Disciplina</th>
                 <th className="px-4 py-3 font-semibold text-center">Bimestre</th>
                 <th className="px-4 py-3 font-semibold text-center">Nota</th>
+                <th className="px-4 py-3 font-semibold text-center">Ação</th>
               </tr>
             </thead>
             <tbody>
@@ -216,12 +232,13 @@ export default function Notas({ matricula: professorIdInicial }) {
                     <td className="px-4 py-3 text-slate-600">{nota.disciplina?.nome ?? '—'}</td>
                     <td className="px-4 py-3 text-center text-slate-500">{nota.bimestre}º</td>
                     <td className="px-4 py-3 text-center font-bold text-slate-800">{nota.valor}</td>
+                    <td className="px-4 py-3 text-center"><button type="button" disabled={saving} onClick={() => removerNota(nota)} title="Excluir nota" aria-label="Excluir nota" className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"><Trash2 size={16} /></button></td>
                   </tr>
                 ))}
               {!loading && notasFiltradas.length === 0 && (
-                <tr><td colSpan={4} className="px-5 py-8 text-center text-sm text-slate-400">Nenhuma nota cadastrada para este aluno.</td></tr>
+                <tr><td colSpan={5} className="px-5 py-8 text-center text-sm text-slate-400">Nenhuma nota cadastrada para este aluno.</td></tr>
               )}
-              {loading && <tr><td colSpan={4} className="px-5 py-8 text-center text-sm text-slate-400">Carregando notas...</td></tr>}
+              {loading && <tr><td colSpan={5} className="px-5 py-8 text-center text-sm text-slate-400">Carregando notas...</td></tr>}
             </tbody>
           </table>
         </div>

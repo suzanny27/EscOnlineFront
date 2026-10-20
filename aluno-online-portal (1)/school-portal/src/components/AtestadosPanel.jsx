@@ -98,19 +98,22 @@ export default function AtestadosPanel({ perfil = 'aluno', matriculaInicial = ''
 
     setEnviando(true);
     try {
-      const salvo = await enviarAtestado({
+      await enviarAtestado({
         arquivo,
         matricula: Number(matriculaSelecionada),
         professorId: perfil === 'professor' ? Number(professorId) : undefined,
       });
-      setAtestados((atuais) => [salvo, ...atuais]);
+      const consulta = perfil === 'aluno'
+        ? listarAtestadosDoAluno(matriculaSelecionada)
+        : listarAtestadosDoProfessor(professorId);
+      setAtestados(await consulta);
       setArquivo(null);
       setInputArquivoKey((key) => key + 1);
       setMensagem('Atestado enviado com sucesso.');
     } catch (cause) {
       setErro(typeof cause.response?.data === 'string'
         ? cause.response.data
-        : cause.response?.data?.message || 'Não foi possível enviar o atestado.');
+        : cause.response?.data?.message || cause.message || 'Não foi possível enviar o atestado.');
     } finally {
       setEnviando(false);
     }
@@ -121,9 +124,13 @@ export default function AtestadosPanel({ perfil = 'aluno', matriculaInicial = ''
     setErro('');
     try {
       await excluirAtestado(atestado.id);
-      setAtestados((atuais) => atuais.filter((item) => item.id !== atestado.id));
+      const identificador = perfil === 'aluno' ? matriculaInicial : professorId;
+      const lista = perfil === 'aluno'
+        ? await listarAtestadosDoAluno(identificador)
+        : await listarAtestadosDoProfessor(identificador);
+      setAtestados(lista);
     } catch (cause) {
-      setErro(cause.response?.data?.message || 'Não foi possível excluir o atestado.');
+      setErro(cause.response?.data?.message || cause.message || 'Não foi possível excluir o atestado.');
     }
   }
 

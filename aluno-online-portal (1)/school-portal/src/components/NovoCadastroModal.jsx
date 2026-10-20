@@ -58,6 +58,7 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
   const [errors, setErrors] = useState({});
   const [saveError, setSaveError] = useState('');
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const idadeAluno = calcularIdade(alunoForm.dataNascimento);
   const idadeProfessor = calcularIdade(professorForm.dataNascimento);
@@ -125,41 +126,51 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
   };
 
   const handleSave = async () => {
+    if (saving) return;
     setSaveError('');
     if (tipo === 'aluno') {
       if (!validateAluno()) return;
+      setSaving(true);
       try {
         await onSaveAluno({ ...alunoForm });
       } catch (error) {
         setSaveError(error.response?.data?.message || error.message || 'Não foi possível salvar o cadastro.');
+        setSaving(false);
         return;
       }
     } else if (tipo === 'professor') {
       if (!validateProfessor()) return;
+      setSaving(true);
       try {
         await onSaveProfessor({ ...professorForm });
       } catch (error) {
         setSaveError(error.response?.data?.message || error.message || 'Não foi possível salvar o cadastro.');
+        setSaving(false);
         return;
       }
     } else if (tipo === 'responsavel') {
       if (!validateResponsavel()) return;
+      setSaving(true);
       try {
         await onSaveResponsavel({ ...responsavelForm });
       } catch (error) {
         setSaveError(error.response?.data?.message || error.message || 'Não foi possível salvar o cadastro.');
+        setSaving(false);
         return;
       }
     } else {
       if (!validateFuncionario()) return;
+      setSaving(true);
       try {
         await onSaveFuncionario({ ...funcionarioForm });
       } catch (error) {
         setSaveError(error.response?.data?.message || error.message || 'Não foi possível salvar o cadastro.');
+        setSaving(false);
         return;
       }
     }
     setSaved(true);
+    setSaving(false);
     setTimeout(onClose, 800);
   };
 
@@ -489,8 +500,8 @@ export default function NovoCadastroModal({ onClose, onSaveAluno, onSaveProfesso
               <button onClick={onClose} className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-surface-muted">
                 Cancelar
               </button>
-              <button onClick={handleSave} className="rounded-lg bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
-                Salvar cadastro
+              <button disabled={saving} onClick={handleSave} className="rounded-lg bg-brand-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60">
+                {saving ? 'Salvando…' : 'Salvar cadastro'}
               </button>
             </div>
           </div>

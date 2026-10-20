@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Plus, Search, GraduationCap, User, Heart, Briefcase, ArrowUpRight } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Plus, Search, GraduationCap, User, Heart, Briefcase, ArrowUpRight, Trash2 } from 'lucide-react';
 import PageHeader from '../../components/PageHeader';
 import StatusBadge from '../../components/StatusBadge';
 import FooterStats from '../../components/FooterStats';
@@ -15,11 +15,14 @@ const TABS = [
 ];
 
 export default function Cadastros() {
-  const { alunos, professores, responsaveis, funcionarios, turmas, loading, error, addAluno, addProfessor, addResponsavel, addFuncionario } = useCadastros();
+  const { alunos, professores, responsaveis, funcionarios, turmas, loading, error, refresh, addAluno, addProfessor, addResponsavel, addFuncionario, removeCadastro } = useCadastros();
   const [tab, setTab] = useState('alunos');
   const [query, setQuery] = useState('');
   const [novoCadastroAberto, setNovoCadastroAberto] = useState(false);
   const [fichaAberta, setFichaAberta] = useState(null);
+  const [actionError, setActionError] = useState('');
+
+  useEffect(() => { refresh(); }, [refresh]);
 
   const dadosPorAba = {
     alunos: { lista: alunos, resumo: resumoAluno },
@@ -48,6 +51,17 @@ export default function Cadastros() {
     if (registro) setFichaAberta({ tipo: tipoSingular, registro });
   };
 
+  async function excluirRegistro(row) {
+    const registro = dadosPorAba[tab].lista.find((item) => item.matricula === row.code);
+    if (!registro || !window.confirm(`Excluir o cadastro de ${row.name}?`)) return;
+    setActionError('');
+    try {
+      await removeCadastro(tab, registro);
+    } catch (cause) {
+      setActionError(cause.response?.data?.message || cause.message || 'Não foi possível excluir o cadastro.');
+    }
+  }
+
   return (
     <>
       <PageHeader
@@ -62,6 +76,7 @@ export default function Cadastros() {
       <section className="rounded-2xl border border-slate-200 bg-surface-card p-5 shadow-card sm:p-6">
         {loading && <p className="mb-4 text-sm text-slate-500">Carregando cadastros do backend...</p>}
         {error && <p role="alert" className="mb-4 text-sm text-amber-700">{error}</p>}
+        {actionError && <p role="alert" className="mb-4 text-sm text-rose-700">{actionError}</p>}
         <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="inline-flex flex-wrap gap-1 rounded-lg bg-surface-muted p-1">
             {TABS.map(({ key, label, icon: Icon }) => (
@@ -132,6 +147,9 @@ export default function Cadastros() {
                       Ver ficha
                       <ArrowUpRight className="h-3.5 w-3.5" />
                     </button>
+                    <button type="button" onClick={() => excluirRegistro(p)} title={`Excluir ${p.name}`} aria-label={`Excluir ${p.name}`} className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -168,6 +186,9 @@ export default function Cadastros() {
               >
                 Ver ficha
                 <ArrowUpRight className="h-3.5 w-3.5" />
+              </button>
+              <button type="button" onClick={() => excluirRegistro(p)} title={`Excluir ${p.name}`} aria-label={`Excluir ${p.name}`} className="ml-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600">
+                <Trash2 className="h-4 w-4" />
               </button>
             </li>
           ))}

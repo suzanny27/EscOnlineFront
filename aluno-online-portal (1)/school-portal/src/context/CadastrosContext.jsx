@@ -9,11 +9,16 @@ import {
   cadastrarSecretario,
   cadastrarVinculoAlunoResponsavel,
   cadastrarVinculoProfessor,
+  excluirAluno,
+  excluirProfessor,
+  excluirResponsavel,
+  excluirCoordenador,
+  excluirDiretor,
+  excluirSecretario,
   listarAlunos,
   listarCoordenadores,
   listarDiretores,
   listarDisciplinas,
-  listarNotas,
   listarProfessores,
   listarResponsaveis,
   listarSecretarios,
@@ -32,11 +37,9 @@ export function CadastrosProvider({ children }) {
   const [turmas, setTurmas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    let mounted = true;
-
-    async function carregarCadastros() {
+  const refresh = useCallback(async () => {
+      setLoading(true);
+      setError('');
       const results = await Promise.allSettled([
         listarAlunos(),
         listarTurmas(),
@@ -48,8 +51,6 @@ export function CadastrosProvider({ children }) {
         listarDiretores(),
         listarSecretarios(),
       ]);
-
-      if (!mounted) return;
 
       const [alunosResult, turmasResult, professoresResult, responsaveisResult, vinculosResult,
         aulasResult, coordenadoresResult, diretoresResult, secretariosResult] = results;
@@ -102,17 +103,15 @@ export function CadastrosProvider({ children }) {
         };
       }));
       setFuncionarios([
-        ...value(coordenadoresResult).map((item) => ({ ...item, id: `C-${item.id}`, matricula: String(item.id), nomeCompleto: item.nome, cargo: 'Coordenador(a)', status: 'Ativo' })),
-        ...value(diretoresResult).map((item) => ({ ...item, id: `D-${item.id}`, matricula: String(item.id), nomeCompleto: item.nome, cargo: 'Diretor(a)', status: 'Ativo' })),
-        ...value(secretariosResult).map((item) => ({ ...item, id: `S-${item.id}`, matricula: String(item.id), nomeCompleto: item.nome, cargo: 'Secretário(a) escolar', status: 'Ativo' })),
+        ...value(coordenadoresResult).map((item) => ({ ...item, backendId: item.id, id: `C-${item.id}`, matricula: String(item.id), nomeCompleto: item.nome, cargo: 'Coordenador(a)', status: 'Ativo' })),
+        ...value(diretoresResult).map((item) => ({ ...item, backendId: item.id, id: `D-${item.id}`, matricula: String(item.id), nomeCompleto: item.nome, cargo: 'Diretor(a)', status: 'Ativo' })),
+        ...value(secretariosResult).map((item) => ({ ...item, backendId: item.id, id: `S-${item.id}`, matricula: String(item.id), nomeCompleto: item.nome, cargo: 'Secretário(a) escolar', status: 'Ativo' })),
       ]);
       if (erroLeitura) setError('Algumas listas não puderam ser carregadas do backend.');
       setLoading(false);
-    }
+    }, []);
 
-    carregarCadastros();
-    return () => { mounted = false; };
-  }, []);
+  useEffect(() => { refresh(); }, [refresh]);
 
   const addAluno = useCallback(async (dados) => {
     const salvo = await cadastrarAluno({
@@ -122,9 +121,6 @@ export function CadastrosProvider({ children }) {
       dataNascimento: dados.dataNascimento,
       turma: { idTurma: Number(dados.turmaId) },
     });
-    const novo = { ...salvo, id: `A-${salvo.matricula}`, matricula: String(salvo.matricula), nomeCompleto: salvo.nome, status: 'Ativo' };
-    setAlunos((prev) => [novo, ...prev]);
-
     try {
       const nomeResponsavel = dados.responsavelPrincipal.trim();
       const existente = responsaveis.find((item) => item.nomeCompleto.toLowerCase() === nomeResponsavel.toLowerCase());
@@ -138,21 +134,14 @@ export function CadastrosProvider({ children }) {
         aluno: { matricula: Number(salvo.matricula) },
         responsavel: { idResponsavel: responsavel.idResponsavel },
       });
-      if (!existente) {
-        setResponsaveis((prev) => [{
-          ...responsavel,
-          id: `R-${responsavel.idResponsavel}`,
-          matricula: String(responsavel.idResponsavel),
-          nomeCompleto: responsavel.nome,
-          status: 'Ativo',
-        }, ...prev]);
-      }
+      await refresh();
     } catch (erro) {
+      await refresh();
       throw new Error(`Aluno cadastrado, mas o vínculo do responsável falhou: ${erro.response?.data?.message || erro.message}`);
     }
 
-    return novo;
-  }, [responsaveis]);
+    return salvo;
+  }, [responsaveis, refresh]);
 
   const addProfessor = useCallback(async (dados) => {
     const idsTurma = dados.turmasIds.map(Number).filter(Number.isInteger);
@@ -164,16 +153,14 @@ export function CadastrosProvider({ children }) {
       email: dados.email || null,
       telefone: dados.telefone || null,
     });
-    const disciplinasExistentes = await listarDisciplinas();
-    const nomesDisciplinas = [...new Set(dados.disciplinas.split(',').map((nome) => nome.trim()).filter(Boolean))];
-    const disciplinas = [];
-
-    for (const nome of nomesDisciplinas) {
-      const existente = disciplinasExistentes.find((item) => item.nome.toLowerCase() === nome.toLowerCase());
-      disciplinas.push(existente ?? await cadastrarDisciplina({ nome }));
-    }
-
     try {
+      const disciplinasExistentes = await listarDisciplinas();
+      const nomesDisciplinas = [...new Set(dados.disciplinas.split(',').map((nome) => nome.trim()).filter(Boolean))];
+      const disciplinas = [];
+      for (const nome of nomesDisciplinas) {
+        const existente = disciplinasExistentes.find((item) => item.nome.toLowerCase() === nome.toLowerCase());
+        disciplinas.push(existente ?? await cadastrarDisciplina({ nome }));
+      }
       await Promise.all(idsTurma.flatMap((idTurma) => disciplinas.map((disciplina) =>
         cadastrarVinculoProfessor({
           professor: { idProfessor: salvo.idProfessor },
@@ -182,22 +169,13 @@ export function CadastrosProvider({ children }) {
         })
       )));
     } catch (erro) {
+      await refresh();
       throw new Error(`Professor cadastrado, mas não foi possível salvar os vínculos: ${erro.response?.data?.message || erro.message}`);
     }
 
-    const novo = {
-      ...salvo,
-      id: `P-${salvo.idProfessor}`,
-      matricula: String(salvo.idProfessor),
-      nomeCompleto: salvo.nome,
-      turmas: turmas.filter((turma) => idsTurma.includes(turma.idTurma)),
-      turmasIds: idsTurma.map(String),
-      disciplinas: nomesDisciplinas.join(', '),
-      status: 'Ativo',
-    };
-    setProfessores((prev) => [novo, ...prev]);
-    return novo;
-  }, [turmas]);
+    await refresh();
+    return salvo;
+  }, [refresh]);
 
   const addResponsavel = useCallback(async (dados) => {
     const aluno = alunos.find((item) => item.nomeCompleto.toLowerCase() === dados.alunoVinculado.trim().toLowerCase());
@@ -209,23 +187,19 @@ export function CadastrosProvider({ children }) {
       email: dados.email || null,
       telefone: dados.telefone || null,
     });
-    await cadastrarVinculoAlunoResponsavel({
-      parentesco: dados.parentesco,
-      aluno: { matricula: Number(aluno.matricula) },
-      responsavel: { idResponsavel: salvo.idResponsavel },
-    });
-    const novo = {
-      ...salvo,
-      id: `R-${salvo.idResponsavel}`,
-      matricula: String(salvo.idResponsavel),
-      nomeCompleto: salvo.nome,
-      parentesco: dados.parentesco,
-      alunoVinculado: aluno.nomeCompleto,
-      status: 'Ativo',
-    };
-    setResponsaveis((prev) => [novo, ...prev]);
-    return novo;
-  }, [alunos]);
+    try {
+      await cadastrarVinculoAlunoResponsavel({
+        parentesco: dados.parentesco,
+        aluno: { matricula: Number(aluno.matricula) },
+        responsavel: { idResponsavel: salvo.idResponsavel },
+      });
+    } catch (erro) {
+      await refresh();
+      throw new Error(`Responsável cadastrado, mas o vínculo com o aluno falhou: ${erro.response?.data?.message || erro.message}`);
+    }
+    await refresh();
+    return salvo;
+  }, [alunos, refresh]);
 
   const addFuncionario = useCallback(async (dados) => {
     const payload = {
@@ -242,14 +216,25 @@ export function CadastrosProvider({ children }) {
           ? ['Secretário(a) escolar', await cadastrarSecretario(payload)]
           : [null, null];
     if (!salvo) throw new Error('Esse cargo ainda não possui cadastro no backend.');
-    const novo = { ...salvo, id: `${recurso}-${salvo.id}`, matricula: String(salvo.id), nomeCompleto: salvo.nome, cargo: recurso, status: 'Ativo' };
-    setFuncionarios((prev) => [novo, ...prev]);
-    return novo;
-  }, []);
+    await refresh();
+    return salvo;
+  }, [refresh]);
+
+  const removeCadastro = useCallback(async (tipo, registro) => {
+    const id = registro.matricula;
+    if (tipo === 'alunos') await excluirAluno(id);
+    else if (tipo === 'professores') await excluirProfessor(registro.idProfessor);
+    else if (tipo === 'responsaveis') await excluirResponsavel(registro.idResponsavel);
+    else if (registro.cargo === 'Diretor(a)') await excluirDiretor(registro.backendId);
+    else if (registro.cargo === 'Coordenador(a)') await excluirCoordenador(registro.backendId);
+    else if (registro.cargo === 'Secretário(a) escolar') await excluirSecretario(registro.backendId);
+    else throw new Error('Tipo de cadastro não disponível para exclusão.');
+    await refresh();
+  }, [refresh]);
 
   const value = useMemo(
-    () => ({ alunos, professores, responsaveis, funcionarios, turmas, loading, error, addAluno, addProfessor, addResponsavel, addFuncionario }),
-    [alunos, professores, responsaveis, funcionarios, turmas, loading, error, addAluno, addProfessor, addResponsavel, addFuncionario]
+    () => ({ alunos, professores, responsaveis, funcionarios, turmas, loading, error, refresh, addAluno, addProfessor, addResponsavel, addFuncionario, removeCadastro }),
+    [alunos, professores, responsaveis, funcionarios, turmas, loading, error, refresh, addAluno, addProfessor, addResponsavel, addFuncionario, removeCadastro]
   );
 
   return <CadastrosContext.Provider value={value}>{children}</CadastrosContext.Provider>;
